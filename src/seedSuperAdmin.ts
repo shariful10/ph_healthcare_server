@@ -1,8 +1,6 @@
 import config from "./app/config";
-import { PrismaClient } from "@prisma/client";
+import prisma from "./app/utils/prisma";
 import { hashPassword } from "./app/helpers/hashPassword";
-
-const prisma = new PrismaClient();
 
 export const seedSuperAdmin = async () => {
   const email = config.superAdmin.email!;
