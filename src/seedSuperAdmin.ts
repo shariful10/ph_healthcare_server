@@ -15,16 +15,14 @@ export const seedSuperAdmin = async (): Promise<User | null> => {
   }
 
   try {
-    // Do a quick existence check to avoid touching an existing account.
     const existingUser = await prisma.user.findUnique({ where: { email } });
 
-    // Derive admin details from config if present, otherwise sensible defaults
     const superAdminName = "Super Admin";
     const superAdminContact = "054824568521";
 
     if (existingUser) {
-      // If user exists but admin record is missing, create admin
       const existingAdmin = await prisma.admin.findUnique({ where: { email } });
+
       if (!existingAdmin) {
         await prisma.admin.create({
           data: {
