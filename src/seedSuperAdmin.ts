@@ -9,7 +9,7 @@ export const seedSuperAdmin = async (): Promise<User | null> => {
 
   if (!email || !password) {
     console.warn(
-      "[seedSuperAdmin] super admin credentials are not configured. Skipping seeding."
+      "Super admin credentials are not configured. Skipping seeding."
     );
     return null;
   }
@@ -35,7 +35,7 @@ export const seedSuperAdmin = async (): Promise<User | null> => {
         });
         console.info("Created missing Admin record for existing user.");
       } else {
-        console.info(" Super Admin user and admin already exist. Skipping.");
+        console.info("Super Admin already exist. Skipping.");
       }
 
       return existingUser;
