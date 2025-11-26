@@ -1,12 +1,9 @@
-import config from "../../config";
 import prisma from "../../utils/prisma";
 import AppError from "../../errors/AppError";
 import { AdminPayload } from "./user.interface";
 import { User, UserRole } from "@prisma/client";
-import { sendEmail } from "../../utils/sendEmail";
 import { httpStatus } from "../../utils/httpStatus";
 import QueryBuilder from "../../builder/QueryBuilder";
-import { jwtHelpers } from "../../helpers/jwtHelpers";
 import { hashPassword } from "../../helpers/hashPassword";
 
 const createAdminIntoDB = async (payload: AdminPayload) => {
