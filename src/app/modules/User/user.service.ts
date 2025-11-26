@@ -1,6 +1,7 @@
 import config from "../../config";
 import prisma from "../../utils/prisma";
 import AppError from "../../errors/AppError";
+import { AdminPayload } from "./user.interface";
 import { User, UserRole } from "@prisma/client";
 import { sendEmail } from "../../utils/sendEmail";
 import { httpStatus } from "../../utils/httpStatus";
@@ -8,49 +9,50 @@ import QueryBuilder from "../../builder/QueryBuilder";
 import { jwtHelpers } from "../../helpers/jwtHelpers";
 import { hashPassword } from "../../helpers/hashPassword";
 
-const createUserIntoDB = async (payload: User) => {
+const createAdminIntoDB = async (payload: AdminPayload) => {
   const isUserExistByEmail = await prisma.user.findUnique({
-    where: { email: payload.email },
+    where: { email: payload.admin.email },
   });
 
   if (isUserExistByEmail) {
     throw new AppError(
       httpStatus.BAD_REQUEST,
-      `User with this email: ${payload.email} already exists!`
+      `User with this email: ${payload.admin.email} already exists!`
+    );
+  }
+
+  const isAdminExistByEmail = await prisma.admin.findUnique({
+    where: { email: payload.admin.email },
+  });
+
+  if (isAdminExistByEmail) {
+    throw new AppError(
+      httpStatus.BAD_REQUEST,
+      `Admin with this email: ${payload.admin.email} already exists!`
     );
   }
 
   const hashedPassword = await hashPassword(payload.password);
 
   const userData = {
-    ...payload,
+    email: payload.admin.email,
     password: hashedPassword,
-    isVerified: false,
+    role: UserRole.ADMIN,
   };
 
-  const jwtPayload = {
-    fullName: payload.fullName,
-    email: payload.email,
-    role: UserRole.USER,
-    profilePic: payload?.profilePic || "",
-    isVerified: false,
-  };
+  const result = await prisma.$transaction(async (tx) => {
+    await tx.user.create({
+      data: userData,
+    });
 
-  const accessToken = jwtHelpers.createToken(
-    jwtPayload,
-    config.jwt.access.secret as string,
-    config.jwt.resetPassword.expiresIn as string
-  );
+    const createAdmin = await tx.admin.create({
+      data: payload.admin,
+    });
 
-  const result = await prisma.user.create({ data: userData });
-  const confirmedLink = `${config.verify.email}?token=${accessToken}`;
+    return createAdmin;
+  });
 
-  await sendEmail(result.email, undefined, confirmedLink);
-
-  return {
-    message:
-      "We have sent a confirmation email to your email address. Please check your inbox.",
-  };
+  return result;
 };
 
 const getAllUserFromDB = async (query: Record<string, unknown>) => {
@@ -92,29 +94,25 @@ const updateUserIntoDB = async (userId: string, payload: Partial<User>) => {
     );
   }
 
-  if (!payload.profilePic && isUserExist.profilePic) {
-    payload.profilePic = isUserExist.profilePic;
-  }
+  // const updatedUser = await prisma.user.update({
+  //   where: { id: userId },
+  //   data: {
+  //     name: payload.name,
+  //     profilePic: payload.profilePic || "",
+  //   },
+  //   select: {
+  //     id: true,
+  //     name: true,
+  //     email: true,
+  //     profilePic: true,
+  //     role: true,
+  //     isVerified: true,
+  //     createdAt: true,
+  //     updatedAt: true,
+  //   },
+  // });
 
-  const updatedUser = await prisma.user.update({
-    where: { id: userId },
-    data: {
-      fullName: payload.fullName,
-      profilePic: payload.profilePic || "",
-    },
-    select: {
-      id: true,
-      fullName: true,
-      email: true,
-      profilePic: true,
-      role: true,
-      isVerified: true,
-      createdAt: true,
-      updatedAt: true,
-    },
-  });
-
-  return updatedUser;
+  return null;
 };
 
 const getSingleUserByIdFromDB = async (userId: string) => {
@@ -154,7 +152,7 @@ const deleteUserFromDB = async (userId: string) => {
 };
 
 export const UserService = {
-  createUserIntoDB,
+  createAdminIntoDB,
   getAllUserFromDB,
   updateUserIntoDB,
   deleteUserFromDB,

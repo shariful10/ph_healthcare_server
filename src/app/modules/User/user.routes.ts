@@ -20,9 +20,9 @@ router.get(
 );
 
 router.post(
-  "/register",
-  validateRequest(UserValidation.createUserValidationSchema),
-  UserController.createUser
+  "/create-admin",
+  // validateRequest(UserValidation.createAdminValidationSchema),
+  UserController.createAdmin
 );
 
 router.patch(
