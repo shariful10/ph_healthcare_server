@@ -1,4 +1,4 @@
-export const existingUser = (payload: string, title: string = "User") => {
-  const message = `${title} with this email: ${payload} already exists!`;
+export const existingUser = (email: string, title: string = "User") => {
+  const message = `${title} with this email: ${email} already exists!`;
   return message;
 };
