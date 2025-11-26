@@ -8,7 +8,7 @@ const getAllAdminsFromDB = async (
   options: Record<string, unknown>
 ) => {
   const { searchTerm, ...filterData } = query;
-  const { page, limit, skip } = paginationHelper.calculatePagination(options);
+  const { limit, skip } = paginationHelper.calculatePagination(options);
 
   const andConditions: Prisma.AdminWhereInput[] = [];
 
