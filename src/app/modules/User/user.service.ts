@@ -5,6 +5,7 @@ import { User, UserRole } from "@prisma/client";
 import { httpStatus } from "../../utils/httpStatus";
 import QueryBuilder from "../../builder/QueryBuilder";
 import { hashPassword } from "../../helpers/hashPassword";
+import { existingUser } from "../../utils/existingUser";
 
 const createAdminIntoDB = async (payload: AdminPayload) => {
   const isUserExistByEmail = await prisma.user.findUnique({
@@ -14,7 +15,7 @@ const createAdminIntoDB = async (payload: AdminPayload) => {
   if (isUserExistByEmail) {
     throw new AppError(
       httpStatus.BAD_REQUEST,
-      `User with this email: ${payload.admin.email} already exists!`
+      existingUser(payload.admin.email)
     );
   }
 
@@ -25,7 +26,7 @@ const createAdminIntoDB = async (payload: AdminPayload) => {
   if (isAdminExistByEmail) {
     throw new AppError(
       httpStatus.BAD_REQUEST,
-      `Admin with this email: ${payload.admin.email} already exists!`
+      existingUser(payload.admin.email, "Admin")
     );
   }
 
