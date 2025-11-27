@@ -1,6 +1,6 @@
-import { Prisma } from "@prisma/client";
 import prisma from "../../utils/prisma";
 import AppError from "../../errors/AppError";
+import { Admin, Prisma } from "@prisma/client";
 import { httpStatus } from "../../utils/httpStatus";
 import { adminSearchableFields } from "./admin.constant";
 import { paginationHelper } from "../../helpers/paginationHelper";
@@ -63,16 +63,29 @@ const getAllAdminsFromDB = async (
 };
 
 const getAdminByIdFromDB = async (adminId: string) => {
+  await prisma.admin.findFirstOrThrow({
+    where: { id: adminId },
+  });
+
   const result = await prisma.admin.findUnique({
     where: { id: adminId },
   });
 
-  if (!result) {
-    throw new AppError(
-      httpStatus.NOT_FOUND,
-      `Admin with ID: ${adminId} not found`
-    );
-  }
+  return result;
+};
+
+const updateAdminByIdInToDB = async (
+  adminId: string,
+  payload: Partial<Admin>
+) => {
+  await prisma.admin.findFirstOrThrow({
+    where: { id: adminId },
+  });
+
+  const result = await prisma.admin.update({
+    where: { id: adminId },
+    data: payload,
+  });
 
   return result;
 };
@@ -80,4 +93,5 @@ const getAdminByIdFromDB = async (adminId: string) => {
 export const AdminService = {
   getAllAdminsFromDB,
   getAdminByIdFromDB,
+  updateAdminByIdInToDB,
 };
