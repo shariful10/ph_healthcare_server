@@ -1,5 +1,7 @@
 import { Prisma } from "@prisma/client";
 import prisma from "../../utils/prisma";
+import AppError from "../../errors/AppError";
+import { httpStatus } from "../../utils/httpStatus";
 import { adminSearchableFields } from "./admin.constant";
 import { paginationHelper } from "../../helpers/paginationHelper";
 
@@ -54,12 +56,28 @@ const getAllAdminsFromDB = async (
       page,
       limit,
       total,
-      totalPage: Math.ceil(total / limit),
+      totalPages: Math.ceil(total / limit),
     },
     data: result,
   };
 };
 
+const getAdminByIdFromDB = async (adminId: string) => {
+  const result = await prisma.admin.findUnique({
+    where: { id: adminId },
+  });
+
+  if (!result) {
+    throw new AppError(
+      httpStatus.NOT_FOUND,
+      `Admin with ID: ${adminId} not found`
+    );
+  }
+
+  return result;
+};
+
 export const AdminService = {
   getAllAdminsFromDB,
+  getAdminByIdFromDB,
 };
