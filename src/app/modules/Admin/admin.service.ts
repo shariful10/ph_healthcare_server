@@ -1,5 +1,5 @@
 import prisma from "../../utils/prisma";
-import { Admin, Prisma } from "@prisma/client";
+import { Admin, Prisma, UserStatus } from "@prisma/client";
 import { adminSearchableFields } from "./admin.constant";
 import { paginationHelper } from "../../helpers/paginationHelper";
 
@@ -89,7 +89,7 @@ const updateAdminByIdInToDB = async (
 };
 
 const deleteAdminByIdFromDB = async (adminId: string) => {
-  await prisma.admin.findFirstOrThrow({
+  await prisma.admin.findUniqueOrThrow({
     where: { id: adminId },
   });
 
@@ -110,9 +110,40 @@ const deleteAdminByIdFromDB = async (adminId: string) => {
   return result;
 };
 
+const softDeleteAdminByIdFromDB = async (adminId: string) => {
+  await prisma.admin.findUniqueOrThrow({
+    where: { id: adminId },
+  });
+
+  const result = await prisma.$transaction(async (tx) => {
+    const deletedData = await tx.admin.update({
+      where: {
+        id: adminId,
+      },
+      data: {
+        isDeleted: true,
+      },
+    });
+
+    await tx.user.update({
+      where: {
+        email: deletedData.email,
+      },
+      data: {
+        status: UserStatus.DELETED,
+      },
+    });
+
+    return deletedData;
+  });
+
+  return result;
+};
+
 export const AdminService = {
   getAllAdminsFromDB,
   getAdminByIdFromDB,
   updateAdminByIdInToDB,
   deleteAdminByIdFromDB,
+  softDeleteAdminByIdFromDB,
 };
