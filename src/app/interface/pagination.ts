@@ -1,8 +1,8 @@
-export type TOptions = {
+export type IOptions = {
   page?: number;
   limit?: number;
-  sortBy?: string;
-  sortOrder?: "asc" | "desc";
+  sortBy?: string | undefined;
+  sortOrder?: "asc" | "desc" | undefined;
 };
 
 export type TPaginationResult = {

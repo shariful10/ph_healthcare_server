@@ -1,11 +1,12 @@
 import prisma from "../../utils/prisma";
-import { Admin, Prisma, UserStatus } from "@prisma/client";
+import { IOptions } from "../../interface/pagination";
 import { adminSearchableFields } from "./admin.constant";
+import { Admin, Prisma, UserStatus } from "@prisma/client";
 import { paginationHelper } from "../../helpers/paginationHelper";
 
 const getAllAdminsFromDB = async (
   query: Record<string, unknown>,
-  options: Record<string, unknown>
+  options: IOptions
 ) => {
   const { searchTerm, ...filterData } = query;
   const { page, limit, skip } = paginationHelper.calculatePagination(options);
