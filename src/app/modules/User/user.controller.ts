@@ -14,17 +14,6 @@ const createAdmin = catchAsync(async (req, res) => {
   });
 });
 
-const getAllUser = catchAsync(async (req, res) => {
-  const result = await UserService.getAllUserFromDB(req.query);
-
-  sendResponse(res, {
-    statusCode: httpStatus.OK,
-    message: "Users are retrieved successfully!",
-    meta: result.meta,
-    data: result.data,
-  });
-});
-
 const updateUser = catchAsync(async (req, res) => {
   const userId = req.user.id;
 
@@ -66,7 +55,6 @@ const deleteUser = catchAsync(async (req, res) => {
 
 export const UserController = {
   createAdmin,
-  getAllUser,
   updateUser,
   deleteUser,
   getSingleUserById,

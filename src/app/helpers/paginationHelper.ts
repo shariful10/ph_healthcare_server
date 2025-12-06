@@ -1,6 +1,6 @@
-import { TOptions, TPaginationResult } from "../interface/pagination";
+import { IOptions, TPaginationResult } from "../interface/pagination";
 
-const calculatePagination = (options: TOptions): TPaginationResult => {
+const calculatePagination = (options: IOptions): TPaginationResult => {
   const page: number = Number(options.page) || 1;
   const limit: number = Number(options.limit) || 10;
   const skip: number = (page - 1) * limit;
