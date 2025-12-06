@@ -53,33 +53,6 @@ const createAdminIntoDB = async (payload: AdminPayload) => {
   return result;
 };
 
-const getAllUserFromDB = async (query: Record<string, unknown>) => {
-  const userQuery = new QueryBuilder(prisma.user, query)
-    .search(["fullName", "email"])
-    .select(["-password"])
-    .paginate();
-
-  const [result, meta] = await Promise.all([
-    userQuery.execute(),
-    userQuery.countTotal(),
-  ]);
-
-  if (!result.length) {
-    throw new AppError(httpStatus.NOT_FOUND, "User not found!");
-  }
-
-  // Remove password from each user
-  const data = result.map((user: User) => {
-    const { password, ...rest } = user;
-    return rest;
-  });
-
-  return {
-    meta,
-    data,
-  };
-};
-
 const updateUserIntoDB = async (userId: string, payload: Partial<User>) => {
   const isUserExist = await prisma.user.findUnique({
     where: { id: userId },
@@ -151,7 +124,6 @@ const deleteUserFromDB = async (userId: string) => {
 
 export const UserService = {
   createAdminIntoDB,
-  getAllUserFromDB,
   updateUserIntoDB,
   deleteUserFromDB,
   getSingleUserByIdFromDB,
