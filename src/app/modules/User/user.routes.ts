@@ -1,7 +1,7 @@
 import { Router } from "express";
 import auth from "../../middlewares/auth";
 import { UserRole } from "@prisma/client";
-import { UserValidation } from "./user.validation";
+import { UserValidations } from "./user.validation";
 import { UserController } from "./user.controller";
 import validateRequest from "../../middlewares/validateRequest";
 
@@ -15,16 +15,12 @@ router.get(
 
 router.post(
   "/create-admin",
-  // validateRequest(UserValidation.createAdminValidationSchema),
+  auth(UserRole.SUPER_ADMIN, UserRole.ADMIN),
+  validateRequest(UserValidations.createAdminSchema),
   UserController.createAdmin
 );
 
-router.patch(
-  "/update",
-  auth(),
-  validateRequest(UserValidation.updateUserValidationSchema),
-  UserController.updateUser
-);
+router.patch("/update", auth(), UserController.updateUser);
 
 router.delete(
   "/:userId",
