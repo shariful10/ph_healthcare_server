@@ -4,10 +4,14 @@ import AppError from "../../errors/AppError";
 import { httpStatus } from "../../utils/httpStatus";
 import { jwtHelpers } from "../../helpers/jwtHelpers";
 import { passwordCompare } from "../../helpers/comparePasswords";
+import { UserStatus } from "@prisma/client";
 
 const loginUser = async (email: string, password: string) => {
   const user = await prisma.user.findUniqueOrThrow({
-    where: { email },
+    where: {
+      email,
+      status: UserStatus.ACTIVE,
+    },
   });
 
   const isPasswordMatched = await passwordCompare(password, user.password);
