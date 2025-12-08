@@ -11,10 +11,10 @@ const loginValidationSchema = z.object({
 
 const changePasswordValidationSchema = z.object({
   body: z.object({
-    currentPassword: z
-      .string({ required_error: "Current password is required" })
+    oldPassword: z
+      .string({ required_error: "Old password is required" })
       .min(6, {
-        message: "Current password must be at least 6 characters long",
+        message: "Old password must be at least 6 characters long",
       }),
     newPassword: z
       .string({ required_error: "New password is required" })
