@@ -1,12 +1,17 @@
 import { UserRole } from "@prisma/client";
 
 export type RefreshPayload = {
-	id: string;
-	fullName: string;
-	email: string;
-	role: UserRole;
-	iat: number;
-	profilePic?: string;
-	exp: number;
-	isVerified: boolean;
+  id: string;
+  fullName: string;
+  email: string;
+  role: UserRole;
+  iat: number;
+  profilePic?: string;
+  exp: number;
+  isVerified: boolean;
+};
+
+export type TChangePassword = {
+  oldPassword: string;
+  newPassword: string;
 };

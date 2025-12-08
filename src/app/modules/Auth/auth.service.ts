@@ -5,6 +5,9 @@ import { httpStatus } from "../../utils/httpStatus";
 import { jwtHelpers } from "../../helpers/jwtHelpers";
 import { passwordCompare } from "../../helpers/comparePasswords";
 import { UserStatus } from "@prisma/client";
+import { JwtPayload } from "jsonwebtoken";
+import { TChangePassword } from "./auth.interface";
+import { hashPassword } from "../../helpers/hashPassword";
 
 const loginUser = async (email: string, password: string) => {
   const user = await prisma.user.findUniqueOrThrow({
@@ -75,7 +78,37 @@ const refreshToken = async (token: string) => {
   };
 };
 
+const changePassword = async (user: JwtPayload, payload: TChangePassword) => {
+  const userData = await prisma.user.findFirstOrThrow({
+    where: {
+      email: user.email,
+    },
+  });
+
+  const isPasswordMatched = await passwordCompare(
+    payload.oldPassword,
+    userData.password
+  );
+
+  if (!isPasswordMatched) {
+    throw new AppError(httpStatus.UNAUTHORIZE, "Password is incorrect!");
+  }
+
+  const hashedPassword = await hashPassword(payload.newPassword);
+
+  await prisma.user.update({
+    where: { id: userData.id },
+    data: {
+      password: hashedPassword,
+      needPasswordChange: false,
+    },
+  });
+
+  return;
+};
+
 export const AuthService = {
   loginUser,
   refreshToken,
+  changePassword,
 };
