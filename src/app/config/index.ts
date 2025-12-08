@@ -9,6 +9,8 @@ export default {
   host: process.env.HOST || "localhost",
   databaseUrl: process.env.DATABASE_URL,
   sendEmail: {
+    app_user: process.env.APP_USER,
+    app_pass: process.env.APP_PASS,
     brevo_user: process.env.BREVO_USER,
     brevo_pass: process.env.BREVO_PASS,
     brevo_email: process.env.BREVO_EMAIL,
@@ -23,6 +25,7 @@ export default {
       expiresIn: process.env.JWT_REFRESH_EXPIRES_IN,
     },
     resetPassword: {
+      secret: process.env.JWT_RESET_PASS_SECRET,
       expiresIn: process.env.JWT_RESET_PASS_ACCESS_EXPIRES_IN,
     },
   },

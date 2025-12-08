@@ -1,13 +1,14 @@
 import config from "../../config";
 import prisma from "../../utils/prisma";
+import { UserStatus } from "@prisma/client";
 import AppError from "../../errors/AppError";
+import { JwtPayload, Secret } from "jsonwebtoken";
+import { TChangePassword } from "./auth.interface";
 import { httpStatus } from "../../utils/httpStatus";
 import { jwtHelpers } from "../../helpers/jwtHelpers";
-import { passwordCompare } from "../../helpers/comparePasswords";
-import { UserStatus } from "@prisma/client";
-import { JwtPayload } from "jsonwebtoken";
-import { TChangePassword } from "./auth.interface";
 import { hashPassword } from "../../helpers/hashPassword";
+import { passwordCompare } from "../../helpers/comparePasswords";
+import { sendEmail } from "../../utils/sendEmail";
 
 const loginUser = async (email: string, password: string) => {
   const user = await prisma.user.findUniqueOrThrow({
@@ -31,13 +32,13 @@ const loginUser = async (email: string, password: string) => {
 
   const accessToken = jwtHelpers.createToken(
     jwtPayload,
-    config.jwt.access.secret as string,
+    config.jwt.access.secret as Secret,
     config.jwt.access.expiresIn as string
   );
 
   const refreshToken = jwtHelpers.createToken(
     jwtPayload,
-    config.jwt.refresh.secret as string,
+    config.jwt.refresh.secret as Secret,
     config.jwt.refresh.expiresIn as string
   );
 
@@ -68,7 +69,7 @@ const refreshToken = async (token: string) => {
       email: isUserExist.email,
       role: isUserExist.role,
     },
-    config.jwt.access.secret as string,
+    config.jwt.access.secret as Secret,
     config.jwt.access.expiresIn as string
   );
 
@@ -82,6 +83,7 @@ const changePassword = async (user: JwtPayload, payload: TChangePassword) => {
   const userData = await prisma.user.findFirstOrThrow({
     where: {
       email: user.email,
+      status: UserStatus.ACTIVE,
     },
   });
 
@@ -107,8 +109,34 @@ const changePassword = async (user: JwtPayload, payload: TChangePassword) => {
   return;
 };
 
+const forgotPassword = async (email: string) => {
+  const user = await prisma.user.findUniqueOrThrow({
+    where: {
+      email,
+      status: UserStatus.ACTIVE,
+    },
+  });
+
+  const jwtPayload = {
+    id: user.id,
+    email: user.email,
+    role: user.role,
+  };
+
+  const resetToken = jwtHelpers.createToken(
+    jwtPayload,
+    config.jwt.resetPassword.secret as Secret,
+    config.jwt.resetPassword.expiresIn as string
+  );
+
+  const resetPassLink = `${config.verify.resetPassUI}?token=${resetToken}`;
+
+  sendEmail(user.email, resetPassLink);
+};
+
 export const AuthService = {
   loginUser,
   refreshToken,
   changePassword,
+  forgotPassword,
 };
