@@ -1,4 +1,5 @@
 import prisma from "../../utils/prisma";
+import { JwtPayload } from "jsonwebtoken";
 import { IOptions } from "../../interface/pagination";
 import { adminSearchableFields } from "./admin.constant";
 import { Admin, Prisma, UserStatus } from "@prisma/client";
@@ -80,7 +81,8 @@ const getAdminByIdFromDB = async (adminId: string): Promise<Admin | null> => {
 
 const updateAdminByIdInToDB = async (
   adminId: string,
-  payload: Partial<Admin>
+  payload: Partial<Admin>,
+  user: JwtPayload
 ): Promise<Admin> => {
   await prisma.admin.findFirstOrThrow({
     where: {

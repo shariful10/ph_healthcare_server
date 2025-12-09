@@ -11,11 +11,11 @@ export const verifyToken = (
     return jwt.verify(token, secret) as JwtPayload;
   } catch (error: any) {
     if (error.name === "TokenExpiredError") {
-      throw new AppError(httpStatus.UNAUTHORIZE, "JWT token is expired");
+      throw new AppError(httpStatus.UNAUTHORIZED, "JWT token is expired");
     } else if (error.name === "JsonWebTokenError") {
-      throw new AppError(httpStatus.UNAUTHORIZE, "Invalid JWT token");
+      throw new AppError(httpStatus.UNAUTHORIZED, "Invalid JWT token");
     } else {
-      throw new AppError(httpStatus.UNAUTHORIZE, "Failed to verify token");
+      throw new AppError(httpStatus.UNAUTHORIZED, "Failed to verify token");
     }
   }
 };

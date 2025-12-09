@@ -15,7 +15,7 @@ const auth = (...requiredRoles: UserRole[]) => {
     }
 
     if (!token) {
-      throw new AppError(httpStatus.UNAUTHORIZE, "You are not authorized");
+      throw new AppError(httpStatus.UNAUTHORIZED, "You are not authorized");
     }
 
     // Check if the token is valid
