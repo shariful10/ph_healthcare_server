@@ -18,15 +18,15 @@ export default {
   jwt: {
     access: {
       secret: process.env.JWT_ACCESS_SECRET,
-      expiresIn: process.env.JWT_ACCESS_EXPIRES_IN,
+      expires_in: process.env.JWT_ACCESS_EXPIRES_IN,
     },
     refresh: {
       secret: process.env.JWT_REFRESH_SECRET,
-      expiresIn: process.env.JWT_REFRESH_EXPIRES_IN,
+      expires_in: process.env.JWT_REFRESH_EXPIRES_IN,
     },
     resetPassword: {
       secret: process.env.JWT_RESET_PASS_SECRET,
-      expiresIn: process.env.JWT_RESET_PASS_ACCESS_EXPIRES_IN,
+      expires_in: process.env.JWT_RESET_PASS_ACCESS_EXPIRES_IN,
     },
   },
   superAdmin: {
@@ -41,10 +41,12 @@ export default {
   },
   verify: {
     email: process.env.VERIFY_EMAIL_LINK,
-    resetPassUI: process.env.RESET_PASS_UI_LINK,
-    resetPassLink: process.env.VERIFY_RESET_PASS_LINK,
+    reset_pass_ui: process.env.RESET_PASS_UI_LINK,
+    reset_pass_link: process.env.VERIFY_RESET_PASS_LINK,
   },
-  stripe: {
-    secret_key: process.env.STRIPE_SECRET_KEY,
+  cloudinary: {
+    cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+    api_key: process.env.CLOUDINARY_API_KEY,
+    api_secret: process.env.CLOUDINARY_API_SECRET,
   },
 };
