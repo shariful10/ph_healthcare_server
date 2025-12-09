@@ -134,9 +134,37 @@ const forgotPassword = async (email: string) => {
   sendEmail(user.email, resetPassLink);
 };
 
+const resetPassword = async (token: string, newPassword: string) => {
+  if (!token) {
+    throw new AppError(httpStatus.BAD_REQUEST, "Invalid token!");
+  }
+
+  const decodedData = jwtHelpers.verifyToken(
+    token,
+    config.jwt.resetPassword.secret as Secret
+  );
+
+  const user = await prisma.user.findFirstOrThrow({
+    where: { email: decodedData.email, status: UserStatus.ACTIVE },
+  });
+
+  const hashedPassword = await hashPassword(newPassword);
+
+  await prisma.user.update({
+    where: { id: user.id },
+    data: {
+      password: hashedPassword,
+      needPasswordChange: false,
+    },
+  });
+
+  return;
+};
+
 export const AuthService = {
   loginUser,
   refreshToken,
   changePassword,
   forgotPassword,
+  resetPassword,
 };
