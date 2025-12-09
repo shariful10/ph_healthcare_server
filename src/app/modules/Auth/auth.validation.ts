@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-const loginValidationSchema = z.object({
+const loginSchema = z.object({
   body: z.object({
     email: z.string().email({ message: "Invalid email address" }),
     password: z
@@ -9,7 +9,7 @@ const loginValidationSchema = z.object({
   }),
 });
 
-const changePasswordValidationSchema = z.object({
+const changePasswordSchema = z.object({
   body: z.object({
     oldPassword: z
       .string({ required_error: "Old password is required" })
@@ -22,7 +22,7 @@ const changePasswordValidationSchema = z.object({
   }),
 });
 
-const resetPasswordValidationSchema = z.object({
+const resetPasswordSchema = z.object({
   body: z
     .object({
       newPassword: z.string().min(6, "Password must be at least 6 characters"),
@@ -34,22 +34,22 @@ const resetPasswordValidationSchema = z.object({
     }),
 });
 
-const forgotPasswordValidationSchema = z.object({
+const forgotPasswordSchema = z.object({
   body: z.object({
     email: z.string().email({ message: "Invalid email address" }),
   }),
 });
 
-const resendConfirmationLinkValidationSchema = z.object({
+const resendConfirmationLinkSchema = z.object({
   body: z.object({
     email: z.string().email({ message: "Invalid email address" }),
   }),
 });
 
-export const AuthValidation = {
-  loginValidationSchema,
-  resetPasswordValidationSchema,
-  changePasswordValidationSchema,
-  forgotPasswordValidationSchema,
-  resendConfirmationLinkValidationSchema,
+export const AuthValidations = {
+  loginSchema,
+  resetPasswordSchema,
+  changePasswordSchema,
+  forgotPasswordSchema,
+  resendConfirmationLinkSchema,
 };
