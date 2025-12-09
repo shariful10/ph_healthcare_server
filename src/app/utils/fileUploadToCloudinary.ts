@@ -1,7 +1,8 @@
-import { v2 as cloudinary } from "cloudinary";
+// uploadToCloudinary.ts
 import config from "../config";
+import streamifier from "streamifier";
 import AppError from "../errors/AppError";
-import { httpStatus } from "./httpStatus";
+import { v2 as cloudinary } from "cloudinary";
 
 cloudinary.config({
   cloud_name: config.cloudinary.cloud_name,
@@ -9,16 +10,29 @@ cloudinary.config({
   api_secret: config.cloudinary.api_secret,
 });
 
-const uploadFile = async (filePath: string): Promise<string> => {
-  try {
-    const result = await cloudinary.uploader.upload(filePath);
-    return result.secure_url;
-  } catch (error) {
-    throw new AppError(
-      httpStatus.INTERNAL_SERVER_ERROR,
-      "File upload to Cloudinary failed"
+const fileUploadToCloudinary = async (
+  file: Express.Multer.File,
+  folder: string = "uploads"
+): Promise<string> => {
+  return new Promise((resolve, reject) => {
+    const uploadStream = cloudinary.uploader.upload_stream(
+      {
+        folder: folder,
+        resource_type: "auto", // Automatically detect image, video, raw, etc.
+        public_id: `${file.originalname}`,
+      },
+      (error, result) => {
+        if (error || !result) {
+          reject(new AppError(500, "Failed to upload file to Cloudinary"));
+        } else {
+          resolve(result.secure_url);
+        }
+      }
     );
-  }
+
+    // Pipe the file buffer directly to Cloudinary
+    streamifier.createReadStream(file.buffer).pipe(uploadStream);
+  });
 };
 
-export default uploadFile;
+export default fileUploadToCloudinary;
