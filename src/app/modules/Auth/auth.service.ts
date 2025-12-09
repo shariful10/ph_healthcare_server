@@ -21,7 +21,7 @@ const loginUser = async (email: string, password: string) => {
   const isPasswordMatched = await passwordCompare(password, user.password);
 
   if (!isPasswordMatched) {
-    throw new AppError(httpStatus.UNAUTHORIZE, "Password is incorrect!");
+    throw new AppError(httpStatus.UNAUTHORIZED, "Password is incorrect!");
   }
 
   const jwtPayload = {
@@ -51,7 +51,7 @@ const loginUser = async (email: string, password: string) => {
 
 const refreshToken = async (token: string) => {
   if (!token) {
-    throw new AppError(httpStatus.UNAUTHORIZE, "You are not authorized!");
+    throw new AppError(httpStatus.UNAUTHORIZED, "You are not authorized!");
   }
 
   const decodedData = jwtHelpers.verifyToken(
@@ -93,7 +93,7 @@ const changePassword = async (user: JwtPayload, payload: TChangePassword) => {
   );
 
   if (!isPasswordMatched) {
-    throw new AppError(httpStatus.UNAUTHORIZE, "Password is incorrect!");
+    throw new AppError(httpStatus.UNAUTHORIZED, "Password is incorrect!");
   }
 
   const hashedPassword = await hashPassword(payload.newPassword);
