@@ -2,13 +2,13 @@ import config from "../../config";
 import prisma from "../../utils/prisma";
 import { UserStatus } from "@prisma/client";
 import AppError from "../../errors/AppError";
+import { sendEmail } from "../../utils/sendEmail";
 import { JwtPayload, Secret } from "jsonwebtoken";
 import { TChangePassword } from "./auth.interface";
 import { httpStatus } from "../../utils/httpStatus";
 import { jwtHelpers } from "../../helpers/jwtHelpers";
 import { hashPassword } from "../../helpers/hashPassword";
 import { passwordCompare } from "../../helpers/comparePasswords";
-import { sendEmail } from "../../utils/sendEmail";
 
 const loginUser = async (email: string, password: string) => {
   const user = await prisma.user.findUniqueOrThrow({
@@ -33,13 +33,13 @@ const loginUser = async (email: string, password: string) => {
   const accessToken = jwtHelpers.createToken(
     jwtPayload,
     config.jwt.access.secret as Secret,
-    config.jwt.access.expiresIn as string
+    config.jwt.access.expires_in as string
   );
 
   const refreshToken = jwtHelpers.createToken(
     jwtPayload,
     config.jwt.refresh.secret as Secret,
-    config.jwt.refresh.expiresIn as string
+    config.jwt.refresh.expires_in as string
   );
 
   return {
@@ -70,7 +70,7 @@ const refreshToken = async (token: string) => {
       role: isUserExist.role,
     },
     config.jwt.access.secret as Secret,
-    config.jwt.access.expiresIn as string
+    config.jwt.access.expires_in as string
   );
 
   return {
@@ -126,10 +126,10 @@ const forgotPassword = async (email: string) => {
   const resetToken = jwtHelpers.createToken(
     jwtPayload,
     config.jwt.resetPassword.secret as Secret,
-    config.jwt.resetPassword.expiresIn as string
+    config.jwt.resetPassword.expires_in as string
   );
 
-  const resetPassLink = `${config.verify.resetPassUI}?token=${resetToken}`;
+  const resetPassLink = `${config.verify.reset_pass_ui}?token=${resetToken}`;
 
   sendEmail(user.email, resetPassLink);
 };
@@ -139,13 +139,20 @@ const resetPassword = async (token: string, newPassword: string) => {
     throw new AppError(httpStatus.BAD_REQUEST, "Invalid token!");
   }
 
-  const decodedData = jwtHelpers.verifyToken(
+  const validateToken = jwtHelpers.verifyToken(
     token,
     config.jwt.resetPassword.secret as Secret
   );
 
+  if (!validateToken) {
+    throw new AppError(httpStatus.FORBIDDEN, "Forbidden!");
+  }
+
   const user = await prisma.user.findFirstOrThrow({
-    where: { email: decodedData.email, status: UserStatus.ACTIVE },
+    where: {
+      email: validateToken.email,
+      status: UserStatus.ACTIVE,
+    },
   });
 
   const hashedPassword = await hashPassword(newPassword);
