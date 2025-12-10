@@ -1,13 +1,12 @@
 import prisma from "../../utils/prisma";
 import AppError from "../../errors/AppError";
-import { AdminPayload } from "./user.interface";
 import { User, UserRole } from "@prisma/client";
 import { httpStatus } from "../../utils/httpStatus";
-import QueryBuilder from "../../builder/QueryBuilder";
-import { hashPassword } from "../../helpers/hashPassword";
 import { existingUser } from "../../utils/existingUser";
+import { hashPassword } from "../../helpers/hashPassword";
+import { IAdminPayload, IDoctorPayload } from "./user.interface";
 
-const createAdminIntoDB = async (payload: AdminPayload) => {
+const createAdminIntoDB = async (payload: IAdminPayload) => {
   const isUserExistByEmail = await prisma.user.findUnique({
     where: { email: payload.admin.email },
   });
@@ -48,6 +47,52 @@ const createAdminIntoDB = async (payload: AdminPayload) => {
     });
 
     return createAdmin;
+  });
+
+  return result;
+};
+
+const createDoctorIntoDB = async (payload: IDoctorPayload) => {
+  const isUserExistByEmail = await prisma.user.findUnique({
+    where: { email: payload.doctor.email },
+  });
+
+  if (isUserExistByEmail) {
+    throw new AppError(
+      httpStatus.BAD_REQUEST,
+      existingUser(payload.doctor.email)
+    );
+  }
+
+  const isAdminExistByEmail = await prisma.admin.findUnique({
+    where: { email: payload.doctor.email },
+  });
+
+  if (isAdminExistByEmail) {
+    throw new AppError(
+      httpStatus.BAD_REQUEST,
+      existingUser(payload.doctor.email, "Admin")
+    );
+  }
+
+  const hashedPassword = await hashPassword(payload.password);
+
+  const userData = {
+    email: payload.doctor.email,
+    password: hashedPassword,
+    role: UserRole.DOCTOR,
+  };
+
+  const result = await prisma.$transaction(async (tx) => {
+    await tx.user.create({
+      data: userData,
+    });
+
+    const createDoctor = await tx.doctor.create({
+      data: payload.doctor,
+    });
+
+    return createDoctor;
   });
 
   return result;
@@ -124,6 +169,7 @@ const deleteUserFromDB = async (userId: string) => {
 
 export const UserService = {
   createAdminIntoDB,
+  createDoctorIntoDB,
   updateUserIntoDB,
   deleteUserFromDB,
   getSingleUserByIdFromDB,
