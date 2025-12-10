@@ -27,3 +27,14 @@ export type IDoctorPayload = {
   };
   password: string;
 };
+
+export type IPatientPayload = {
+  patient: {
+    name: string;
+    email: string;
+    profilePhoto?: string;
+    contactNumber?: string;
+    address?: string;
+  };
+  password: string;
+};

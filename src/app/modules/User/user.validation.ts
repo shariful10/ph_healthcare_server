@@ -97,7 +97,44 @@ const createDoctorSchema = z.object({
   }),
 });
 
+const createPatientSchema = z.object({
+  body: z.object({
+    password: z
+      .string({
+        required_error: "Password is required.",
+        invalid_type_error: "Password must be a string.",
+      })
+      .min(6, "Password must be at least 6 characters long."),
+    patient: z.object({
+      name: z.string({
+        required_error: "Name is required.",
+        invalid_type_error: "Name must be a string.",
+      }),
+      email: z
+        .string({
+          required_error: "Email is required.",
+          invalid_type_error: "Email must be a string.",
+        })
+        .email("Invalid email address."),
+      profilePhoto: z
+        .string({ invalid_type_error: "Profile photo must be a string." })
+        .optional(),
+      contactNumber: z
+        .string({
+          invalid_type_error: "Contact number must be a string.",
+        })
+        .optional(),
+      address: z
+        .string({
+          invalid_type_error: "Address must be a string.",
+        })
+        .optional(),
+    }),
+  }),
+});
+
 export const UserValidations = {
   createAdminSchema,
   createDoctorSchema,
+  createPatientSchema,
 };

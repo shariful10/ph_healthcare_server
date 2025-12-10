@@ -27,6 +27,12 @@ router.post(
   UserController.createDoctor
 );
 
+router.post(
+  "/create-patient",
+  validateRequest(UserValidations.createPatientSchema),
+  UserController.createPatient
+);
+
 router.patch("/update", auth(), UserController.updateUser);
 
 router.delete(

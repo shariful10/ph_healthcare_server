@@ -1,12 +1,16 @@
 import prisma from "../../utils/prisma";
 import AppError from "../../errors/AppError";
-import { User, UserRole } from "@prisma/client";
 import { httpStatus } from "../../utils/httpStatus";
 import { existingUser } from "../../utils/existingUser";
 import { hashPassword } from "../../helpers/hashPassword";
-import { IAdminPayload, IDoctorPayload } from "./user.interface";
+import { Admin, Doctor, Patient, User, UserRole } from "@prisma/client";
+import {
+  IAdminPayload,
+  IDoctorPayload,
+  IPatientPayload,
+} from "./user.interface";
 
-const createAdminIntoDB = async (payload: IAdminPayload) => {
+const createAdminIntoDB = async (payload: IAdminPayload): Promise<Admin> => {
   const isUserExistByEmail = await prisma.user.findUnique({
     where: { email: payload.admin.email },
   });
@@ -14,7 +18,7 @@ const createAdminIntoDB = async (payload: IAdminPayload) => {
   if (isUserExistByEmail) {
     throw new AppError(
       httpStatus.BAD_REQUEST,
-      existingUser(payload.admin.email)
+      `Admin with email: ${payload.admin.email} already exists!`
     );
   }
 
@@ -25,7 +29,7 @@ const createAdminIntoDB = async (payload: IAdminPayload) => {
   if (isAdminExistByEmail) {
     throw new AppError(
       httpStatus.BAD_REQUEST,
-      existingUser(payload.admin.email, "Admin")
+      `Admin with email: ${payload.admin.email} already exists!`
     );
   }
 
@@ -52,7 +56,7 @@ const createAdminIntoDB = async (payload: IAdminPayload) => {
   return result;
 };
 
-const createDoctorIntoDB = async (payload: IDoctorPayload) => {
+const createDoctorIntoDB = async (payload: IDoctorPayload): Promise<Doctor> => {
   const isUserExistByEmail = await prisma.user.findUnique({
     where: { email: payload.doctor.email },
   });
@@ -60,18 +64,18 @@ const createDoctorIntoDB = async (payload: IDoctorPayload) => {
   if (isUserExistByEmail) {
     throw new AppError(
       httpStatus.BAD_REQUEST,
-      existingUser(payload.doctor.email)
+      `Doctor with email: ${payload.doctor.email} already exists!`
     );
   }
 
-  const isAdminExistByEmail = await prisma.admin.findUnique({
+  const isDoctorExistByEmail = await prisma.doctor.findUnique({
     where: { email: payload.doctor.email },
   });
 
-  if (isAdminExistByEmail) {
+  if (isDoctorExistByEmail) {
     throw new AppError(
       httpStatus.BAD_REQUEST,
-      existingUser(payload.doctor.email, "Admin")
+      `Doctor with email: ${payload.doctor.email} already exists!`
     );
   }
 
@@ -93,6 +97,54 @@ const createDoctorIntoDB = async (payload: IDoctorPayload) => {
     });
 
     return createDoctor;
+  });
+
+  return result;
+};
+
+const createPatientIntoDB = async (
+  payload: IPatientPayload
+): Promise<Patient> => {
+  const isUserExistByEmail = await prisma.user.findUnique({
+    where: { email: payload.patient.email },
+  });
+
+  if (isUserExistByEmail) {
+    throw new AppError(
+      httpStatus.BAD_REQUEST,
+      `Patient with email: ${payload.patient.email} already exists!`
+    );
+  }
+
+  const isPatientExistByEmail = await prisma.patient.findUnique({
+    where: { email: payload.patient.email },
+  });
+
+  if (isPatientExistByEmail) {
+    throw new AppError(
+      httpStatus.BAD_REQUEST,
+      `Patient with email: ${payload.patient.email} already exists!`
+    );
+  }
+
+  const hashedPassword = await hashPassword(payload.password);
+
+  const userData = {
+    email: payload.patient.email,
+    password: hashedPassword,
+    role: UserRole.PATIENT,
+  };
+
+  const result = await prisma.$transaction(async (tx) => {
+    await tx.user.create({
+      data: userData,
+    });
+
+    const createPatient = await tx.patient.create({
+      data: payload.patient,
+    });
+
+    return createPatient;
   });
 
   return result;
@@ -170,6 +222,7 @@ const deleteUserFromDB = async (userId: string) => {
 export const UserService = {
   createAdminIntoDB,
   createDoctorIntoDB,
+  createPatientIntoDB,
   updateUserIntoDB,
   deleteUserFromDB,
   getSingleUserByIdFromDB,

@@ -12,10 +12,13 @@ export const uploadFile = multer({
   fileFilter: (req, file, cb) => {
     // Add allowed file types validation
     const allowedMimeTypes = [
-      "image/jpeg",
-      "image/jpg",
       "image/png",
+      "image/jpg",
       "image/gif",
+      "image/jpeg",
+      "image/avif",
+      "image/tiff",
+      "image/svg+xml",
       "image/webp",
       "video/mp4",
       "video/mkv",
