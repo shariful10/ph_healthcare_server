@@ -20,6 +20,13 @@ router.post(
   UserController.createAdmin
 );
 
+router.post(
+  "/create-doctor",
+  auth(UserRole.SUPER_ADMIN, UserRole.ADMIN),
+  validateRequest(UserValidations.createDoctorSchema),
+  UserController.createDoctor
+);
+
 router.patch("/update", auth(), UserController.updateUser);
 
 router.delete(

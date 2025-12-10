@@ -19,6 +19,7 @@ export const uploadFile = multer({
       "image/webp",
       "video/mp4",
       "video/mkv",
+      "video/avi",
       "video/mpeg",
       "video/webm",
       "video/quicktime",
