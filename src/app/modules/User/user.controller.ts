@@ -24,6 +24,16 @@ const createDoctor = catchAsync(async (req, res) => {
   });
 });
 
+const createPatient = catchAsync(async (req, res) => {
+  const result = await UserService.createPatientIntoDB(req.body);
+
+  sendResponse(res, {
+    statusCode: httpStatus.CREATED,
+    message: "Patient created successfully!",
+    data: result,
+  });
+});
+
 const updateUser = catchAsync(async (req, res) => {
   const userId = req.user.id;
 
@@ -66,6 +76,7 @@ const deleteUser = catchAsync(async (req, res) => {
 export const UserController = {
   createAdmin,
   createDoctor,
+  createPatient,
   updateUser,
   deleteUser,
   getSingleUserById,
