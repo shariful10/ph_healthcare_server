@@ -7,7 +7,14 @@ import prisma from "../../utils/prisma";
 import AppError from "../../errors/AppError";
 import { httpStatus } from "../../utils/httpStatus";
 import { hashPassword } from "../../helpers/hashPassword";
-import { Admin, Doctor, Patient, User, UserRole } from "@prisma/client";
+import {
+  Admin,
+  Doctor,
+  Patient,
+  User,
+  UserRole,
+  UserStatus,
+} from "@prisma/client";
 
 const createAdminIntoDB = async (payload: IAdminPayload): Promise<Admin> => {
   const isUserExistByEmail = await prisma.user.findUnique({
@@ -218,6 +225,31 @@ const deleteUserFromDB = async (userId: string) => {
   return null;
 };
 
+const changeProfileStatusIntoDB = async (
+  userId: string,
+  status: UserStatus
+) => {
+  const isUserExist = await prisma.user.findUnique({
+    where: { id: userId, status: UserStatus.ACTIVE },
+  });
+
+  if (!isUserExist) {
+    throw new AppError(
+      httpStatus.NOT_FOUND,
+      `User with this ID: ${userId} not found!`
+    );
+  }
+
+  const updatedUser = await prisma.user.update({
+    where: { id: userId },
+    data: {
+      status,
+    },
+  });
+
+  return updatedUser;
+};
+
 export const UserService = {
   createAdminIntoDB,
   createDoctorIntoDB,
@@ -225,4 +257,5 @@ export const UserService = {
   updateUserIntoDB,
   deleteUserFromDB,
   getSingleUserByIdFromDB,
+  changeProfileStatusIntoDB,
 };

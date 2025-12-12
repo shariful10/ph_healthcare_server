@@ -73,6 +73,19 @@ const deleteUser = catchAsync(async (req, res) => {
   });
 });
 
+const changeProfileStatus = catchAsync(async (req, res) => {
+  const userId = req.user.id;
+  const { status } = req.body;
+
+  const result = await UserService.changeProfileStatusIntoDB(userId, status);
+
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    message: "User status updated successfully!",
+    data: result,
+  });
+});
+
 export const UserController = {
   createAdmin,
   createDoctor,
@@ -80,4 +93,5 @@ export const UserController = {
   updateUser,
   deleteUser,
   getSingleUserById,
+  changeProfileStatus,
 };
