@@ -41,4 +41,11 @@ router.delete(
   UserController.deleteUser
 );
 
+router.patch(
+  "/change-profile-status",
+  auth(),
+  validateRequest(UserValidations.changeProfileStatusSchema),
+  UserController.changeProfileStatus
+);
+
 export const UserRoutes = router;
