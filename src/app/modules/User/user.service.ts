@@ -156,6 +156,11 @@ const createPatientIntoDB = async (
   return result;
 };
 
+const getAllUsersFromDB = async () => {
+  const result = await prisma.user.findMany();
+  return result;
+};
+
 const updateUserIntoDB = async (userId: string, payload: Partial<User>) => {
   const isUserExist = await prisma.user.findUnique({
     where: { id: userId },
@@ -251,6 +256,7 @@ const changeProfileStatusIntoDB = async (
 };
 
 export const UserService = {
+  getAllUsersFromDB,
   createAdminIntoDB,
   createDoctorIntoDB,
   createPatientIntoDB,

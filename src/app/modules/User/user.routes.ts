@@ -8,6 +8,12 @@ import validateRequest from "../../middlewares/validateRequest";
 const router = Router();
 
 router.get(
+  "/",
+  auth(UserRole.SUPER_ADMIN, UserRole.ADMIN),
+  UserController.getAllUsers
+);
+
+router.get(
   "/:userId",
   auth(UserRole.SUPER_ADMIN, UserRole.ADMIN),
   UserController.getSingleUserById
