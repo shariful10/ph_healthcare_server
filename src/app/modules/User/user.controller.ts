@@ -34,6 +34,16 @@ const createPatient = catchAsync(async (req, res) => {
   });
 });
 
+const getAllUsers = catchAsync(async (req, res) => {
+  const result = await UserService.getAllUsersFromDB();
+
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    message: "Users retrieved successfully!",
+    data: result,
+  });
+});
+
 const updateUser = catchAsync(async (req, res) => {
   const userId = req.user.id;
 
@@ -87,6 +97,7 @@ const changeProfileStatus = catchAsync(async (req, res) => {
 });
 
 export const UserController = {
+  getAllUsers,
   createAdmin,
   createDoctor,
   createPatient,
