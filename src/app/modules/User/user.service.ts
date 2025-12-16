@@ -1,4 +1,12 @@
 import {
+  Admin,
+  Doctor,
+  Patient,
+  User,
+  UserRole,
+  UserStatus,
+} from "@prisma/client";
+import {
   IAdminPayload,
   IDoctorPayload,
   IPatientPayload,
@@ -7,14 +15,6 @@ import prisma from "../../utils/prisma";
 import AppError from "../../errors/AppError";
 import { httpStatus } from "../../utils/httpStatus";
 import { hashPassword } from "../../helpers/hashPassword";
-import {
-  Admin,
-  Doctor,
-  Patient,
-  User,
-  UserRole,
-  UserStatus,
-} from "@prisma/client";
 
 const createAdminIntoDB = async (payload: IAdminPayload): Promise<Admin> => {
   const isUserExistByEmail = await prisma.user.findUnique({
