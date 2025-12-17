@@ -229,18 +229,18 @@ const getAllUsersFromDB = async (
 };
 
 const getSingleUserByIdFromDB = async (userId: string) => {
-  const user = await prisma.user.findUnique({
+  const userInfo = await prisma.user.findUnique({
     where: { id: userId },
   });
 
-  if (!user) {
+  if (!userInfo) {
     throw new AppError(
       httpStatus.NOT_FOUND,
       `User with this ID: ${userId} not found!!!!`
     );
   }
 
-  const { password, ...rest } = user;
+  const { password, ...rest } = userInfo;
 
   return rest;
 };
@@ -269,60 +269,44 @@ const changeUserStatusIntoDB = async (userId: string, status: UserStatus) => {
 };
 
 const getMyProfileFromDB = async (email: string) => {
-  const userInfo = await prisma.user.findUnique({
+  const userInfo = await prisma.user.findUniqueOrThrow({
     where: { email },
     select: {
       id: true,
       email: true,
       role: true,
       status: true,
-      admin: {
-        select: {
-          id: true,
-          name: true,
-          email: true,
-          profilePhoto: true,
-          contactNumber: true,
-          createdAt: true,
-          updatedAt: true,
-        },
-      },
-      doctor: {
-        select: {
-          id: true,
-          name: true,
-          email: true,
-          profilePhoto: true,
-          contactNumber: true,
-          address: true,
-          registrationNumber: true,
-          experience: true,
-          gender: true,
-          appointmentFee: true,
-          qualifications: true,
-          currentWorkingPlace: true,
-          designation: true,
-          createdAt: true,
-          updatedAt: true,
-        },
-      },
-      patient: {
-        select: {
-          id: true,
-          name: true,
-          email: true,
-          profilePhoto: true,
-          contactNumber: true,
-          address: true,
-          createdAt: true,
-          updatedAt: true,
-        },
-      },
-      createdAt: true,
-      updatedAt: true,
+      needPasswordChange: true,
     },
   });
-  return userInfo;
+
+  let profileInfo;
+
+  if (
+    userInfo.role === UserRole.SUPER_ADMIN ||
+    userInfo.role === UserRole.ADMIN
+  ) {
+    profileInfo = await prisma.admin.findUnique({
+      where: { email },
+    });
+  }
+
+  if (userInfo.role === UserRole.DOCTOR) {
+    profileInfo = await prisma.doctor.findUnique({
+      where: { email },
+    });
+  }
+
+  if (userInfo.role === UserRole.PATIENT) {
+    profileInfo = await prisma.patient.findUnique({
+      where: { email },
+    });
+  }
+
+  return {
+    ...userInfo,
+    ...profileInfo,
+  };
 };
 
 export const UserService = {

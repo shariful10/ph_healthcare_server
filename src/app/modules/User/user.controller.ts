@@ -82,7 +82,7 @@ const getMyProfile = catchAsync(async (req, res) => {
 
   sendResponse(res, {
     statusCode: httpStatus.OK,
-    message: "User status updated successfully!",
+    message: "My profile retrieved successfully!",
     data: result,
   });
 });
