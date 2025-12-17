@@ -236,7 +236,7 @@ const getSingleUserByIdFromDB = async (userId: string) => {
   if (!user) {
     throw new AppError(
       httpStatus.NOT_FOUND,
-      `User with this ID: ${userId} not found!`
+      `User with this ID: ${userId} not found!!!!`
     );
   }
 
@@ -268,11 +268,69 @@ const changeUserStatusIntoDB = async (userId: string, status: UserStatus) => {
   return updatedUser;
 };
 
+const getMyProfileFromDB = async (email: string) => {
+  const userInfo = await prisma.user.findUnique({
+    where: { email },
+    select: {
+      id: true,
+      email: true,
+      role: true,
+      status: true,
+      admin: {
+        select: {
+          id: true,
+          name: true,
+          email: true,
+          profilePhoto: true,
+          contactNumber: true,
+          createdAt: true,
+          updatedAt: true,
+        },
+      },
+      doctor: {
+        select: {
+          id: true,
+          name: true,
+          email: true,
+          profilePhoto: true,
+          contactNumber: true,
+          address: true,
+          registrationNumber: true,
+          experience: true,
+          gender: true,
+          appointmentFee: true,
+          qualifications: true,
+          currentWorkingPlace: true,
+          designation: true,
+          createdAt: true,
+          updatedAt: true,
+        },
+      },
+      patient: {
+        select: {
+          id: true,
+          name: true,
+          email: true,
+          profilePhoto: true,
+          contactNumber: true,
+          address: true,
+          createdAt: true,
+          updatedAt: true,
+        },
+      },
+      createdAt: true,
+      updatedAt: true,
+    },
+  });
+  return userInfo;
+};
+
 export const UserService = {
   getAllUsersFromDB,
   createAdminIntoDB,
   createDoctorIntoDB,
   createPatientIntoDB,
-  getSingleUserByIdFromDB,
+  getMyProfileFromDB,
   changeUserStatusIntoDB,
+  getSingleUserByIdFromDB,
 };

@@ -75,11 +75,24 @@ const changeUserStatus = catchAsync(async (req, res) => {
   });
 });
 
+const getMyProfile = catchAsync(async (req, res) => {
+  const { email } = req.user;
+
+  const result = await UserService.getMyProfileFromDB(email);
+
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    message: "User status updated successfully!",
+    data: result,
+  });
+});
+
 export const UserController = {
   getAllUsers,
   createAdmin,
   createDoctor,
+  getMyProfile,
   createPatient,
-  getSingleUserById,
   changeUserStatus,
+  getSingleUserById,
 };

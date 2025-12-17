@@ -13,6 +13,8 @@ router.get(
   UserController.getAllUsers
 );
 
+router.get("/my-profile", auth(), UserController.getMyProfile);
+
 router.get(
   "/:userId",
   auth(UserRole.SUPER_ADMIN, UserRole.ADMIN),
@@ -41,7 +43,7 @@ router.post(
 
 router.patch(
   "/:userId/status",
-  auth(),
+  auth(UserRole.SUPER_ADMIN, UserRole.ADMIN),
   validateRequest(UserValidations.changeUserStatusSchema),
   UserController.changeUserStatus
 );
