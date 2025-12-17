@@ -48,4 +48,11 @@ router.patch(
   UserController.changeUserStatus
 );
 
+router.patch(
+  "/update-my-profile",
+  auth(),
+  // validateRequest(UserValidations.updateMyProfileSchema),
+  UserController.updateMyProfile
+);
+
 export const UserRoutes = router;
