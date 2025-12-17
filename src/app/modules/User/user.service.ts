@@ -157,41 +157,18 @@ const createPatientIntoDB = async (
 };
 
 const getAllUsersFromDB = async () => {
-  const result = await prisma.user.findMany();
-  return result;
-};
-
-const updateUserIntoDB = async (userId: string, payload: Partial<User>) => {
-  const isUserExist = await prisma.user.findUnique({
-    where: { id: userId },
+  const result = await prisma.user.findMany({
+    select: {
+      id: true,
+      email: true,
+      role: true,
+      status: true,
+      needPasswordChange: true,
+      createdAt: true,
+      updatedAt: true,
+    },
   });
-
-  if (!isUserExist) {
-    throw new AppError(
-      httpStatus.NOT_FOUND,
-      `User with this ID: ${userId} not found!`
-    );
-  }
-
-  // const updatedUser = await prisma.user.update({
-  //   where: { id: userId },
-  //   data: {
-  //     name: payload.name,
-  //     profilePic: payload.profilePic || "",
-  //   },
-  //   select: {
-  //     id: true,
-  //     name: true,
-  //     email: true,
-  //     profilePic: true,
-  //     role: true,
-  //     isVerified: true,
-  //     createdAt: true,
-  //     updatedAt: true,
-  //   },
-  // });
-
-  return null;
+  return result;
 };
 
 const getSingleUserByIdFromDB = async (userId: string) => {
@@ -209,25 +186,6 @@ const getSingleUserByIdFromDB = async (userId: string) => {
   const { password, ...rest } = user;
 
   return rest;
-};
-
-const deleteUserFromDB = async (userId: string) => {
-  const isUserExist = await prisma.user.findUnique({
-    where: { id: userId },
-  });
-
-  if (!isUserExist) {
-    throw new AppError(
-      httpStatus.NOT_FOUND,
-      `User with this ID: ${userId} not found!`
-    );
-  }
-
-  await prisma.user.delete({
-    where: { id: userId },
-  });
-
-  return null;
 };
 
 const changeProfileStatusIntoDB = async (
@@ -260,8 +218,6 @@ export const UserService = {
   createAdminIntoDB,
   createDoctorIntoDB,
   createPatientIntoDB,
-  updateUserIntoDB,
-  deleteUserFromDB,
   getSingleUserByIdFromDB,
   changeProfileStatusIntoDB,
 };

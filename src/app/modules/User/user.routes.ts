@@ -39,14 +39,6 @@ router.post(
   UserController.createPatient
 );
 
-router.patch("/update", auth(), UserController.updateUser);
-
-router.delete(
-  "/:userId",
-  auth(UserRole.SUPER_ADMIN, UserRole.ADMIN),
-  UserController.deleteUser
-);
-
 router.patch(
   "/change-profile-status",
   auth(),
