@@ -1,8 +1,8 @@
 import {
   Admin,
   Doctor,
+  Prisma,
   Patient,
-  User,
   UserRole,
   UserStatus,
 } from "@prisma/client";
@@ -14,7 +14,10 @@ import {
 import prisma from "../../utils/prisma";
 import AppError from "../../errors/AppError";
 import { httpStatus } from "../../utils/httpStatus";
+import { IOptions } from "../../interface/pagination";
+import { userSearchableFields } from "./user.constants";
 import { hashPassword } from "../../helpers/hashPassword";
+import { paginationHelper } from "../../helpers/paginationHelper";
 
 const createAdminIntoDB = async (payload: IAdminPayload): Promise<Admin> => {
   const isUserExistByEmail = await prisma.user.findUnique({
@@ -156,19 +159,73 @@ const createPatientIntoDB = async (
   return result;
 };
 
-const getAllUsersFromDB = async () => {
+const getAllUsersFromDB = async (
+  query: Record<string, unknown>,
+  options: IOptions
+) => {
+  const { searchTerm, ...filterData } = query;
+  const { page, limit, skip } = paginationHelper.calculatePagination(options);
+
+  const andConditions: Prisma.UserWhereInput[] = [];
+
+  if (query.searchTerm) {
+    andConditions.push({
+      OR: userSearchableFields.map((field) => ({
+        [field]: {
+          contains: query.searchTerm as string,
+          mode: "insensitive",
+        },
+      })),
+    });
+  }
+
+  if (Object.keys(filterData).length > 0) {
+    andConditions.push({
+      AND: Object.keys(filterData).map((key) => ({
+        [key]: {
+          equals: filterData[key],
+        },
+      })),
+    });
+  }
+
+  const whereConditions: Prisma.UserWhereInput =
+    andConditions.length > 0 ? { AND: andConditions } : {};
+
   const result = await prisma.user.findMany({
+    where: whereConditions,
+    skip,
+    take: limit,
+    orderBy:
+      options.sortBy && options.sortOrder
+        ? {
+            [options.sortBy as string]: options.sortOrder,
+          }
+        : { createdAt: "desc" },
     select: {
       id: true,
       email: true,
       role: true,
       status: true,
-      needPasswordChange: true,
+      admin: true,
+      doctor: true,
+      patient: true,
       createdAt: true,
       updatedAt: true,
     },
   });
-  return result;
+
+  const total = await prisma.user.count({ where: whereConditions });
+
+  return {
+    meta: {
+      page,
+      limit,
+      total,
+      totalPages: Math.ceil(total / limit),
+    },
+    data: result,
+  };
 };
 
 const getSingleUserByIdFromDB = async (userId: string) => {
@@ -188,25 +245,23 @@ const getSingleUserByIdFromDB = async (userId: string) => {
   return rest;
 };
 
-const changeProfileStatusIntoDB = async (
-  userId: string,
-  status: UserStatus
-) => {
-  const isUserExist = await prisma.user.findUnique({
-    where: { id: userId, status: UserStatus.ACTIVE },
+const changeUserStatusIntoDB = async (userId: string, status: UserStatus) => {
+  await prisma.user.findUniqueOrThrow({
+    where: { id: userId },
   });
-
-  if (!isUserExist) {
-    throw new AppError(
-      httpStatus.NOT_FOUND,
-      `User with this ID: ${userId} not found!`
-    );
-  }
 
   const updatedUser = await prisma.user.update({
     where: { id: userId },
     data: {
       status,
+    },
+    select: {
+      id: true,
+      email: true,
+      role: true,
+      status: true,
+      createdAt: true,
+      updatedAt: true,
     },
   });
 
@@ -219,5 +274,5 @@ export const UserService = {
   createDoctorIntoDB,
   createPatientIntoDB,
   getSingleUserByIdFromDB,
-  changeProfileStatusIntoDB,
+  changeUserStatusIntoDB,
 };

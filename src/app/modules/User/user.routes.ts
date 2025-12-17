@@ -40,10 +40,10 @@ router.post(
 );
 
 router.patch(
-  "/change-profile-status",
+  "/:userId/status",
   auth(),
-  validateRequest(UserValidations.changeProfileStatusSchema),
-  UserController.changeProfileStatus
+  validateRequest(UserValidations.changeUserStatusSchema),
+  UserController.changeUserStatus
 );
 
 export const UserRoutes = router;

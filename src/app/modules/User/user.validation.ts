@@ -133,7 +133,7 @@ const createPatientSchema = z.object({
   }),
 });
 
-const changeProfileStatusSchema = z.object({
+const changeUserStatusSchema = z.object({
   body: z.object({
     status: z.enum(Object.values(UserStatus) as [string, ...string[]], {
       required_error: "Status is required.",
@@ -147,5 +147,5 @@ export const UserValidations = {
   createAdminSchema,
   createDoctorSchema,
   createPatientSchema,
-  changeProfileStatusSchema,
+  changeUserStatusSchema,
 };

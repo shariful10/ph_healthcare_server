@@ -1,10 +1,8 @@
-export const adminFilterableFields = [
+export const adminFilterableFields: string[] = [
   "name",
   "email",
   "searchTerm",
   "contactNumber",
 ];
 
-export const adminSearchableFields = ["name", "email"];
-
-export const metaFields = ["page", "limit", "sortBy", "sortOrder"];
+export const adminSearchableFields: string[] = ["name", "email"];

@@ -1,8 +1,10 @@
-import config from "../../config";
+import pick from "../../shared/pick";
 import { UserService } from "./user.service";
 import catchAsync from "../../utils/catchAsync";
 import sendResponse from "../../utils/sendResponse";
 import { httpStatus } from "../../utils/httpStatus";
+import { metaFields } from "../../interface/metaFields";
+import { userFilterableFields } from "./user.constants";
 
 const createAdmin = catchAsync(async (req, res) => {
   const result = await UserService.createAdminIntoDB(req.body);
@@ -35,12 +37,16 @@ const createPatient = catchAsync(async (req, res) => {
 });
 
 const getAllUsers = catchAsync(async (req, res) => {
-  const result = await UserService.getAllUsersFromDB();
+  const query = pick(req.query, userFilterableFields);
+  const options = pick(req.query, metaFields);
+
+  const result = await UserService.getAllUsersFromDB(query, options);
 
   sendResponse(res, {
     statusCode: httpStatus.OK,
     message: "Users retrieved successfully!",
-    data: result,
+    meta: result.meta,
+    data: result.data,
   });
 });
 
@@ -56,11 +62,11 @@ const getSingleUserById = catchAsync(async (req, res) => {
   });
 });
 
-const changeProfileStatus = catchAsync(async (req, res) => {
-  const userId = req.user.id;
+const changeUserStatus = catchAsync(async (req, res) => {
   const { status } = req.body;
+  const { userId } = req.params;
 
-  const result = await UserService.changeProfileStatusIntoDB(userId, status);
+  const result = await UserService.changeUserStatusIntoDB(userId, status);
 
   sendResponse(res, {
     statusCode: httpStatus.OK,
@@ -75,5 +81,5 @@ export const UserController = {
   createDoctor,
   createPatient,
   getSingleUserById,
-  changeProfileStatus,
+  changeUserStatus,
 };

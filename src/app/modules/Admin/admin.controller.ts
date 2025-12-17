@@ -3,7 +3,8 @@ import { AdminService } from "./admin.service";
 import catchAsync from "../../utils/catchAsync";
 import { httpStatus } from "../../utils/httpStatus";
 import sendResponse from "../../utils/sendResponse";
-import { adminFilterableFields, metaFields } from "./admin.constant";
+import { metaFields } from "../../interface/metaFields";
+import { adminFilterableFields } from "./admin.constant";
 
 const getAllAdmins = catchAsync(async (req, res) => {
   const query = pick(req.query, adminFilterableFields);
