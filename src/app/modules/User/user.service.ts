@@ -309,12 +309,61 @@ const getMyProfileFromDB = async (email: string) => {
   };
 };
 
+const updateMyProfileInDB = async (
+  email: string,
+  Payload: Partial<IAdminPayload | IDoctorPayload | IPatientPayload>
+) => {
+  const userInfo = await prisma.user.findUniqueOrThrow({
+    where: {
+      email,
+      status: UserStatus.ACTIVE,
+    },
+  });
+
+  let profileInfo;
+
+  if (
+    userInfo.role === UserRole.SUPER_ADMIN ||
+    userInfo.role === UserRole.ADMIN
+  ) {
+    profileInfo = await prisma.admin.update({
+      where: {
+        email: userInfo.email,
+      },
+      data: Payload as Prisma.AdminUpdateInput,
+    });
+  }
+
+  if (userInfo.role === UserRole.DOCTOR) {
+    profileInfo = await prisma.doctor.update({
+      where: {
+        email: userInfo.email,
+      },
+      data: Payload as Prisma.DoctorUpdateInput,
+    });
+  }
+
+  if (userInfo.role === UserRole.PATIENT) {
+    profileInfo = await prisma.patient.update({
+      where: {
+        email: userInfo.email,
+      },
+      data: Payload as Prisma.PatientUpdateInput,
+    });
+  }
+
+  return {
+    ...profileInfo,
+  };
+};
+
 export const UserService = {
   getAllUsersFromDB,
   createAdminIntoDB,
   createDoctorIntoDB,
-  createPatientIntoDB,
   getMyProfileFromDB,
+  createPatientIntoDB,
+  updateMyProfileInDB,
   changeUserStatusIntoDB,
   getSingleUserByIdFromDB,
 };
