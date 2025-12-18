@@ -270,7 +270,10 @@ const changeUserStatusIntoDB = async (userId: string, status: UserStatus) => {
 
 const getMyProfileFromDB = async (email: string) => {
   const userInfo = await prisma.user.findUniqueOrThrow({
-    where: { email },
+    where: {
+      email,
+      status: UserStatus.ACTIVE,
+    },
     select: {
       id: true,
       email: true,
