@@ -1,18 +1,17 @@
-import { metaFields } from "../../interface/metaFields";
 import pick from "../../shared/pick";
 import catchAsync from "../../utils/catchAsync";
 import { httpStatus } from "../../utils/httpStatus";
-import prisma from "../../utils/prisma";
 import sendResponse from "../../utils/sendResponse";
-import { specialtyFilterableFields } from "./specialty.constant";
 import { SpecialtyService } from "./specialty.service";
+import { metaFields } from "../../interface/metaFields";
+import { specialtyFilterableFields } from "./specialty.constant";
 
-const insertSpecialty = catchAsync(async (req, res) => {
-  const result = await SpecialtyService.insertSpecialtyInToDB(req.body);
+const createSpecialty = catchAsync(async (req, res) => {
+  const result = await SpecialtyService.createSpecialtyInToDB(req.body);
 
   sendResponse(res, {
     statusCode: httpStatus.OK,
-    message: "Specialty inserted successfully!",
+    message: "Specialty created successfully!",
     data: result,
   });
 });
@@ -43,8 +42,37 @@ const getSpecialtyById = catchAsync(async (req, res) => {
   });
 });
 
+const updateSpecialty = catchAsync(async (req, res) => {
+  const specialtyId = req.params.specialtyId;
+  const payload = req.body;
+
+  const result = await SpecialtyService.updateSpecialtyInToDB(
+    specialtyId,
+    payload
+  );
+
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    message: "Specialty updated successfully!",
+    data: result,
+  });
+});
+
+const deleteSpecialty = catchAsync(async (req, res) => {
+  const specialtyId = req.params.specialtyId;
+
+  await SpecialtyService.deleteSpecialtyByIdFromDB(specialtyId);
+
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    message: "Specialty deleted successfully!",
+  });
+});
+
 export const SpecialtyController = {
-  insertSpecialty,
+  createSpecialty,
+  updateSpecialty,
+  deleteSpecialty,
   getSpecialtyById,
   getAllSpecialties,
 };
