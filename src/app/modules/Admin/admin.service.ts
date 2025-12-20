@@ -66,7 +66,10 @@ const getAllAdminsFromDB = async (
 
 const getAdminByIdFromDB = async (adminId: string): Promise<Admin | null> => {
   await prisma.admin.findFirstOrThrow({
-    where: { id: adminId },
+    where: { 
+      id: adminId,
+      isDeleted: false
+     },
   });
 
   const result = await prisma.admin.findUnique({
@@ -102,7 +105,10 @@ const deleteAdminByIdFromDB = async (
   adminId: string
 ): Promise<Admin | null> => {
   await prisma.admin.findUniqueOrThrow({
-    where: { id: adminId },
+    where: {
+      id: adminId,
+      isDeleted: false,
+    },
   });
 
   const result = await prisma.$transaction(async (tx) => {

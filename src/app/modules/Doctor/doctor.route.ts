@@ -26,11 +26,11 @@ router.patch(
   DoctorController.updateDoctorById
 );
 
-// router.delete(
-//   "/:doctorId",
-//   auth(UserRole.SUPER_ADMIN, UserRole.ADMIN),
-//   DoctorController.deleteDoctorById
-// );
+router.delete(
+  "/:doctorId",
+  auth(UserRole.SUPER_ADMIN, UserRole.ADMIN),
+  DoctorController.deleteDoctorById
+);
 
 // router.delete(
 //   "/soft-delete/:doctorId",

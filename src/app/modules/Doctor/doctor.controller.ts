@@ -45,8 +45,20 @@ const updateDoctorById = catchAsync(async (req, res) => {
   });
 });
 
+const deleteDoctorById = catchAsync(async (req, res) => {
+  const { doctorId } = req.params;
+
+  await DoctorService.deleteDoctorByIdFromDB(doctorId);
+
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    message: "Doctor is deleted successfully!",
+  });
+});
+
 export const DoctorController = {
   getAllDoctors,
   getDoctorById,
   updateDoctorById,
+  deleteDoctorById,
 };
