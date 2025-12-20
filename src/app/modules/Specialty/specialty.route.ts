@@ -11,4 +11,6 @@ router.post(
   SpecialtyController.insertSpecialty
 );
 
+router.get("/", SpecialtyController.getAllSpecialties);
+
 export const SpecialtyRoutes = router;
