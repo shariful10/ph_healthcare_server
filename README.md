@@ -1,3 +1,5 @@
+[![wakatime](https://wakatime.com/badge/github/shariful10/ph_healthcare_server.svg)](https://wakatime.com/badge/github/shariful10/ph_healthcare_server)
+
 # PH Healthcare Server
 
 A robust backend API starter pack built with Node.js, Express.js, TypeScript, Zod, Prisma, and PostgreSQL. This API provides comprehensive user management, subscription handling, payment processing capabilities with Stripe integration, and file upload functionality.
