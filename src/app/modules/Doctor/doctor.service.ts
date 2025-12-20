@@ -67,7 +67,10 @@ const getDoctorByIdFromDB = async (
   doctorId: string
 ): Promise<Doctor | null> => {
   await prisma.doctor.findFirstOrThrow({
-    where: { id: doctorId },
+    where: {
+      id: doctorId,
+      isDeleted: false,
+    },
   });
 
   const result = await prisma.doctor.findUnique({
@@ -101,8 +104,39 @@ const updateDoctorByIdInToDB = async (
   return result;
 };
 
+const deleteDoctorByIdFromDB = async (
+  doctorId: string
+): Promise<Doctor | null> => {
+  await prisma.doctor.findUniqueOrThrow({
+    where: {
+      id: doctorId,
+      isDeleted: false,
+    },
+  });
+
+  const result = await prisma.$transaction(async (tx) => {
+    const deletedData = await tx.doctor.delete({
+      where: {
+        id: doctorId,
+        isDeleted: false,
+      },
+    });
+
+    await tx.user.delete({
+      where: {
+        email: deletedData.email,
+      },
+    });
+
+    return deletedData;
+  });
+
+  return result;
+};
+
 export const DoctorService = {
   getAllDoctorsFromDB,
   getDoctorByIdFromDB,
   updateDoctorByIdInToDB,
+  deleteDoctorByIdFromDB,
 };
