@@ -2,6 +2,7 @@ import { metaFields } from "../../interface/metaFields";
 import pick from "../../shared/pick";
 import catchAsync from "../../utils/catchAsync";
 import { httpStatus } from "../../utils/httpStatus";
+import prisma from "../../utils/prisma";
 import sendResponse from "../../utils/sendResponse";
 import { specialtyFilterableFields } from "./specialty.constant";
 import { SpecialtyService } from "./specialty.service";
@@ -30,7 +31,20 @@ const getAllSpecialties = catchAsync(async (req, res) => {
   });
 });
 
+const getSpecialtyById = catchAsync(async (req, res) => {
+  const specialtyId = req.params.specialtyId;
+
+  const result = await SpecialtyService.getSpecialtyByIdFromDB(specialtyId);
+
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    message: "Specialty retrieved successfully!",
+    data: result,
+  });
+});
+
 export const SpecialtyController = {
   insertSpecialty,
+  getSpecialtyById,
   getAllSpecialties,
 };

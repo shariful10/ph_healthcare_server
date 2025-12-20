@@ -7,10 +7,12 @@ const router = Router();
 
 router.post(
   "/",
-  validateRequest(SpecialtyValidations.specialtySchema),
+  validateRequest(SpecialtyValidations.createSpecialtySchema),
   SpecialtyController.insertSpecialty
 );
 
 router.get("/", SpecialtyController.getAllSpecialties);
+
+router.get("/:specialtyId", SpecialtyController.getSpecialtyById);
 
 export const SpecialtyRoutes = router;

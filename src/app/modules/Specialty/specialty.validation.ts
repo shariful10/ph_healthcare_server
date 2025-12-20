@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-const specialtySchema = z.object({
+const createSpecialtySchema = z.object({
   body: z.object({
     title: z.string({
       required_error: "Specialty title is required",
@@ -13,6 +13,22 @@ const specialtySchema = z.object({
   }),
 });
 
+const updateSpecialtySchema = z.object({
+  body: z.object({
+    title: z
+      .string({
+        invalid_type_error: "Specialty title must be a string",
+      })
+      .optional(),
+    icon: z
+      .string({
+        invalid_type_error: "Specialty icon must be a string",
+      })
+      .optional(),
+  }),
+});
+
 export const SpecialtyValidations = {
-  specialtySchema,
+  createSpecialtySchema,
+  updateSpecialtySchema,
 };

@@ -69,7 +69,18 @@ const getAllSpecialtiesFromDB = async (
   };
 };
 
+const getSpecialtyByIdFromDB = async (specialtyId: string) => {
+  const result = await prisma.specialties.findUniqueOrThrow({
+    where: {
+      id: specialtyId,
+    },
+  });
+
+  return result;
+};
+
 export const SpecialtyService = {
   insertSpecialtyInToDB,
+  getSpecialtyByIdFromDB,
   getAllSpecialtiesFromDB,
 };
