@@ -81,8 +81,7 @@ const getAdminByIdFromDB = async (adminId: string): Promise<Admin | null> => {
 
 const updateAdminByIdInToDB = async (
   adminId: string,
-  payload: Partial<Admin>,
-  user: JwtPayload
+  payload: Partial<Admin>
 ): Promise<Admin> => {
   await prisma.admin.findFirstOrThrow({
     where: {
