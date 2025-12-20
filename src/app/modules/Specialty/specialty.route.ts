@@ -8,11 +8,19 @@ const router = Router();
 router.post(
   "/",
   validateRequest(SpecialtyValidations.createSpecialtySchema),
-  SpecialtyController.insertSpecialty
+  SpecialtyController.createSpecialty
 );
 
 router.get("/", SpecialtyController.getAllSpecialties);
 
 router.get("/:specialtyId", SpecialtyController.getSpecialtyById);
+
+router.patch(
+  "/:specialtyId",
+  validateRequest(SpecialtyValidations.updateSpecialtySchema),
+  SpecialtyController.updateSpecialty
+);
+
+router.delete("/:specialtyId", SpecialtyController.deleteSpecialty);
 
 export const SpecialtyRoutes = router;

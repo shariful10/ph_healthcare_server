@@ -1,10 +1,10 @@
-import { paginationHelper } from "../../helpers/paginationHelper";
-import { IOptions } from "../../interface/pagination";
 import prisma from "../../utils/prisma";
 import { Prisma, Specialties } from "@prisma/client";
+import { IOptions } from "../../interface/pagination";
 import { specialtySearchableFields } from "./specialty.constant";
+import { paginationHelper } from "../../helpers/paginationHelper";
 
-const insertSpecialtyInToDB = async (payload: Specialties) => {
+const createSpecialtyInToDB = async (payload: Specialties) => {
   const result = await prisma.specialties.create({
     data: payload,
   });
@@ -79,8 +79,44 @@ const getSpecialtyByIdFromDB = async (specialtyId: string) => {
   return result;
 };
 
+const updateSpecialtyInToDB = async (
+  specialtyId: string,
+  payload: Partial<Specialties>
+) => {
+  await prisma.specialties.findUniqueOrThrow({
+    where: {
+      id: specialtyId,
+    },
+  });
+
+  const result = await prisma.specialties.update({
+    where: { id: specialtyId },
+    data: payload,
+  });
+
+  return result;
+};
+
+const deleteSpecialtyByIdFromDB = async (specialtyId: string) => {
+  await prisma.specialties.findUniqueOrThrow({
+    where: {
+      id: specialtyId,
+    },
+  });
+
+  await prisma.specialties.delete({
+    where: {
+      id: specialtyId,
+    },
+  });
+
+  return;
+};
+
 export const SpecialtyService = {
-  insertSpecialtyInToDB,
+  createSpecialtyInToDB,
+  updateSpecialtyInToDB,
   getSpecialtyByIdFromDB,
   getAllSpecialtiesFromDB,
+  deleteSpecialtyByIdFromDB,
 };
