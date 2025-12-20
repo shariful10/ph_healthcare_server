@@ -2,6 +2,8 @@ import { Router } from "express";
 import auth from "../../middlewares/auth";
 import { UserRole } from "@prisma/client";
 import { DoctorController } from "./doctor.controller";
+import { DoctorValidations } from "./doctor.validation";
+import validateRequest from "../../middlewares/validateRequest";
 
 const router = Router();
 
@@ -17,12 +19,12 @@ router.get(
   DoctorController.getDoctorById
 );
 
-// router.patch(
-//   "/:doctorId",
-//   auth(UserRole.SUPER_ADMIN, UserRole.ADMIN),
-//   validateRequest(DoctorController.updateDoctorSchema),
-//   DoctorController.updateDoctorById
-// );
+router.patch(
+  "/:doctorId",
+  auth(UserRole.SUPER_ADMIN, UserRole.ADMIN),
+  validateRequest(DoctorValidations.updateDoctorSchema),
+  DoctorController.updateDoctorById
+);
 
 // router.delete(
 //   "/:doctorId",

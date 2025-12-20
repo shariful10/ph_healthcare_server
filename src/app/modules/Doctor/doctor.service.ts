@@ -80,7 +80,29 @@ const getDoctorByIdFromDB = async (
   return result;
 };
 
+const updateDoctorByIdInToDB = async (
+  doctorId: string,
+  payload: Partial<Doctor>
+): Promise<Doctor> => {
+  await prisma.doctor.findFirstOrThrow({
+    where: {
+      id: doctorId,
+      isDeleted: false,
+    },
+  });
+
+  const result = await prisma.doctor.update({
+    where: {
+      id: doctorId,
+    },
+    data: payload,
+  });
+
+  return result;
+};
+
 export const DoctorService = {
   getAllDoctorsFromDB,
   getDoctorByIdFromDB,
+  updateDoctorByIdInToDB,
 };
