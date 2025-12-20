@@ -1,0 +1,39 @@
+import { Router } from "express";
+import auth from "../../middlewares/auth";
+import { UserRole } from "@prisma/client";
+import { DoctorController } from "./doctor.controller";
+
+const router = Router();
+
+router.get(
+  "/",
+  auth(UserRole.SUPER_ADMIN, UserRole.ADMIN),
+  DoctorController.getAllDoctors
+);
+
+// router.get(
+//   "/:doctorId",
+//   auth(UserRole.SUPER_ADMIN, UserRole.ADMIN),
+//   DoctorController.getDoctorById
+// );
+
+// router.patch(
+//   "/:doctorId",
+//   auth(UserRole.SUPER_ADMIN, UserRole.ADMIN),
+//   validateRequest(DoctorController.updateDoctorSchema),
+//   DoctorController.updateDoctorById
+// );
+
+// router.delete(
+//   "/:doctorId",
+//   auth(UserRole.SUPER_ADMIN, UserRole.ADMIN),
+//   DoctorController.deleteDoctorById
+// );
+
+// router.delete(
+//   "/soft-delete/:doctorId",
+//   auth(UserRole.SUPER_ADMIN, UserRole.ADMIN),
+//   DoctorController.softDeleteDoctorById
+// );
+
+export const DoctorRoutes = router;
