@@ -20,6 +20,19 @@ const getAllDoctors = catchAsync(async (req, res) => {
   });
 });
 
+const getDoctorById = catchAsync(async (req, res) => {
+  const { doctorId } = req.params;
+
+  const result = await DoctorService.getDoctorByIdFromDB(doctorId);
+
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    message: "Doctor is retrieved successfully!",
+    data: result,
+  });
+});
+
 export const DoctorController = {
   getAllDoctors,
+  getDoctorById,
 };

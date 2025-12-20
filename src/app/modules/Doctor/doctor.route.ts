@@ -11,11 +11,11 @@ router.get(
   DoctorController.getAllDoctors
 );
 
-// router.get(
-//   "/:doctorId",
-//   auth(UserRole.SUPER_ADMIN, UserRole.ADMIN),
-//   DoctorController.getDoctorById
-// );
+router.get(
+  "/:doctorId",
+  auth(UserRole.SUPER_ADMIN, UserRole.ADMIN),
+  DoctorController.getDoctorById
+);
 
 // router.patch(
 //   "/:doctorId",
