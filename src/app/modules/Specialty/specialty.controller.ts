@@ -31,7 +31,7 @@ const getAllSpecialties = catchAsync(async (req, res) => {
 });
 
 const getSpecialtyById = catchAsync(async (req, res) => {
-  const specialtyId = req.params.specialtyId;
+  const { specialtyId } = req.params;
 
   const result = await SpecialtyService.getSpecialtyByIdFromDB(specialtyId);
 
@@ -43,7 +43,7 @@ const getSpecialtyById = catchAsync(async (req, res) => {
 });
 
 const updateSpecialty = catchAsync(async (req, res) => {
-  const specialtyId = req.params.specialtyId;
+  const { specialtyId } = req.params;
   const payload = req.body;
 
   const result = await SpecialtyService.updateSpecialtyInToDB(
@@ -59,7 +59,7 @@ const updateSpecialty = catchAsync(async (req, res) => {
 });
 
 const deleteSpecialty = catchAsync(async (req, res) => {
-  const specialtyId = req.params.specialtyId;
+  const { specialtyId } = req.params;
 
   await SpecialtyService.deleteSpecialtyByIdFromDB(specialtyId);
 
