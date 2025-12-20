@@ -1,5 +1,5 @@
 import prisma from "../../utils/prisma";
-import { Doctor, Prisma } from "@prisma/client";
+import { Doctor, Prisma, UserStatus } from "@prisma/client";
 import { IOptions } from "../../interface/pagination";
 import { doctorSearchableFields } from "./doctor.constant";
 import { paginationHelper } from "../../helpers/paginationHelper";
@@ -134,9 +134,45 @@ const deleteDoctorByIdFromDB = async (
   return result;
 };
 
+const softDeleteDoctorByIdFromDB = async (
+  doctorId: string
+): Promise<Doctor | null> => {
+  await prisma.doctor.findUniqueOrThrow({
+    where: {
+      id: doctorId,
+      isDeleted: false,
+    },
+  });
+
+  const result = await prisma.$transaction(async (tx) => {
+    const deletedData = await tx.doctor.update({
+      where: {
+        id: doctorId,
+      },
+      data: {
+        isDeleted: true,
+      },
+    });
+
+    await tx.user.update({
+      where: {
+        email: deletedData.email,
+      },
+      data: {
+        status: UserStatus.DELETED,
+      },
+    });
+
+    return deletedData;
+  });
+
+  return result;
+};
+
 export const DoctorService = {
   getAllDoctorsFromDB,
   getDoctorByIdFromDB,
   updateDoctorByIdInToDB,
   deleteDoctorByIdFromDB,
+  softDeleteDoctorByIdFromDB,
 };
