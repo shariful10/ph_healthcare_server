@@ -247,22 +247,74 @@ const getSingleUserByIdFromDB = async (userId: string) => {
 
 const changeUserStatusIntoDB = async (userId: string, status: UserStatus) => {
   await prisma.user.findUniqueOrThrow({
-    where: { id: userId },
+    where: {
+      id: userId,
+    },
   });
 
-  const updatedUser = await prisma.user.update({
-    where: { id: userId },
-    data: {
-      status,
-    },
-    select: {
-      id: true,
-      email: true,
-      role: true,
-      status: true,
-      createdAt: true,
-      updatedAt: true,
-    },
+  const updatedUser = await prisma.$transaction(async (tx) => {
+    const updatedStatus = await tx.user.update({
+      where: {
+        id: userId,
+      },
+      data: {
+        status,
+      },
+      select: {
+        id: true,
+        email: true,
+        role: true,
+        status: true,
+        createdAt: true,
+        updatedAt: true,
+      },
+    });
+
+    let newStatus;
+
+    if (updatedStatus.status !== UserStatus.DELETED) {
+      newStatus = false;
+    } else {
+      newStatus = true;
+    }
+
+    if (
+      updatedStatus.role === UserRole.ADMIN ||
+      updatedStatus.role === UserRole.SUPER_ADMIN
+    ) {
+      await tx.admin.update({
+        where: {
+          email: updatedStatus.email,
+        },
+        data: {
+          isDeleted: newStatus,
+        },
+      });
+    }
+
+    if (updatedStatus.role === UserRole.DOCTOR) {
+      await tx.doctor.update({
+        where: {
+          email: updatedStatus.email,
+        },
+        data: {
+          isDeleted: newStatus,
+        },
+      });
+    }
+
+    if (updatedStatus.role === UserRole.PATIENT) {
+      await tx.patient.update({
+        where: {
+          email: updatedStatus.email,
+        },
+        data: {
+          isDeleted: newStatus,
+        },
+      });
+    }
+
+    return updatedStatus;
   });
 
   return updatedUser;

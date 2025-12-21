@@ -1,7 +1,7 @@
 import prisma from "../../utils/prisma";
-import { Doctor, Prisma, UserStatus } from "@prisma/client";
 import { IOptions } from "../../interface/pagination";
 import { doctorSearchableFields } from "./doctor.constant";
+import { Doctor, Prisma, UserStatus } from "@prisma/client";
 import { paginationHelper } from "../../helpers/paginationHelper";
 
 const getAllDoctorsFromDB = async (
@@ -73,14 +73,14 @@ const getDoctorByIdFromDB = async (
     },
   });
 
-  const result = await prisma.doctor.findUnique({
+  const userInfo = await prisma.doctor.findUnique({
     where: {
       id: doctorId,
       isDeleted: false,
     },
   });
 
-  return result;
+  return userInfo;
 };
 
 const updateDoctorByIdInToDB = async (
@@ -94,14 +94,17 @@ const updateDoctorByIdInToDB = async (
     },
   });
 
-  const result = await prisma.doctor.update({
+  const userInfo = await prisma.doctor.update({
     where: {
       id: doctorId,
     },
     data: payload,
+    include: {
+      doctorSpecialties: true,
+    },
   });
 
-  return result;
+  return userInfo;
 };
 
 const deleteDoctorByIdFromDB = async (
@@ -114,7 +117,7 @@ const deleteDoctorByIdFromDB = async (
     },
   });
 
-  const result = await prisma.$transaction(async (tx) => {
+  const userInfo = await prisma.$transaction(async (tx) => {
     const deletedData = await tx.doctor.delete({
       where: {
         id: doctorId,
@@ -131,7 +134,7 @@ const deleteDoctorByIdFromDB = async (
     return deletedData;
   });
 
-  return result;
+  return userInfo;
 };
 
 const softDeleteDoctorByIdFromDB = async (
@@ -144,7 +147,7 @@ const softDeleteDoctorByIdFromDB = async (
     },
   });
 
-  const result = await prisma.$transaction(async (tx) => {
+  const userInfo = await prisma.$transaction(async (tx) => {
     const deletedData = await tx.doctor.update({
       where: {
         id: doctorId,
@@ -166,7 +169,7 @@ const softDeleteDoctorByIdFromDB = async (
     return deletedData;
   });
 
-  return result;
+  return userInfo;
 };
 
 export const DoctorService = {

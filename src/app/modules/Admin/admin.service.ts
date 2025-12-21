@@ -1,5 +1,4 @@
 import prisma from "../../utils/prisma";
-import { JwtPayload } from "jsonwebtoken";
 import { IOptions } from "../../interface/pagination";
 import { adminSearchableFields } from "./admin.constant";
 import { Admin, Prisma, UserStatus } from "@prisma/client";
@@ -66,20 +65,20 @@ const getAllAdminsFromDB = async (
 
 const getAdminByIdFromDB = async (adminId: string): Promise<Admin | null> => {
   await prisma.admin.findFirstOrThrow({
-    where: { 
-      id: adminId,
-      isDeleted: false
-     },
-  });
-
-  const result = await prisma.admin.findUnique({
     where: {
       id: adminId,
       isDeleted: false,
     },
   });
 
-  return result;
+  const userInfo = await prisma.admin.findUnique({
+    where: {
+      id: adminId,
+      isDeleted: false,
+    },
+  });
+
+  return userInfo;
 };
 
 const updateAdminByIdInToDB = async (
@@ -93,12 +92,12 @@ const updateAdminByIdInToDB = async (
     },
   });
 
-  const result = await prisma.admin.update({
+  const userInfo = await prisma.admin.update({
     where: { id: adminId },
     data: payload,
   });
 
-  return result;
+  return userInfo;
 };
 
 const deleteAdminByIdFromDB = async (
@@ -111,7 +110,7 @@ const deleteAdminByIdFromDB = async (
     },
   });
 
-  const result = await prisma.$transaction(async (tx) => {
+  const userInfo = await prisma.$transaction(async (tx) => {
     const deletedData = await tx.admin.delete({
       where: { id: adminId },
     });
@@ -125,7 +124,7 @@ const deleteAdminByIdFromDB = async (
     return deletedData;
   });
 
-  return result;
+  return userInfo;
 };
 
 const softDeleteAdminByIdFromDB = async (
@@ -138,7 +137,7 @@ const softDeleteAdminByIdFromDB = async (
     },
   });
 
-  const result = await prisma.$transaction(async (tx) => {
+  const userInfo = await prisma.$transaction(async (tx) => {
     const deletedData = await tx.admin.update({
       where: {
         id: adminId,
@@ -160,7 +159,7 @@ const softDeleteAdminByIdFromDB = async (
     return deletedData;
   });
 
-  return result;
+  return userInfo;
 };
 
 export const AdminService = {

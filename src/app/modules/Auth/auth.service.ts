@@ -11,23 +11,23 @@ import { hashPassword } from "../../helpers/hashPassword";
 import { passwordCompare } from "../../helpers/comparePasswords";
 
 const loginUser = async (email: string, password: string) => {
-  const user = await prisma.user.findUniqueOrThrow({
+  const userInfo = await prisma.user.findUniqueOrThrow({
     where: {
       email,
       status: UserStatus.ACTIVE,
     },
   });
 
-  const isPasswordMatched = await passwordCompare(password, user.password);
+  const isPasswordMatched = await passwordCompare(password, userInfo.password);
 
   if (!isPasswordMatched) {
     throw new AppError(httpStatus.UNAUTHORIZED, "Password is incorrect!");
   }
 
   const jwtPayload = {
-    id: user.id,
-    email: user.email,
-    role: user.role,
+    id: userInfo.id,
+    email: userInfo.email,
+    role: userInfo.role,
   };
 
   const accessToken = jwtHelpers.createToken(
@@ -45,7 +45,7 @@ const loginUser = async (email: string, password: string) => {
   return {
     accessToken,
     refreshToken,
-    needPasswordChange: user.needPasswordChange,
+    needPasswordChange: userInfo.needPasswordChange,
   };
 };
 
@@ -60,7 +60,10 @@ const refreshToken = async (token: string) => {
   );
 
   const isUserExist = await prisma.user.findFirstOrThrow({
-    where: { email: decodedData.email },
+    where: {
+      email: decodedData.email,
+      status: UserStatus.ACTIVE,
+    },
   });
 
   const accessToken = jwtHelpers.createToken(
@@ -80,7 +83,7 @@ const refreshToken = async (token: string) => {
 };
 
 const changePassword = async (user: JwtPayload, payload: TChangePassword) => {
-  const userData = await prisma.user.findFirstOrThrow({
+  const userInfo = await prisma.user.findFirstOrThrow({
     where: {
       email: user.email,
       status: UserStatus.ACTIVE,
@@ -89,7 +92,7 @@ const changePassword = async (user: JwtPayload, payload: TChangePassword) => {
 
   const isPasswordMatched = await passwordCompare(
     payload.oldPassword,
-    userData.password
+    userInfo.password
   );
 
   if (!isPasswordMatched) {
@@ -99,7 +102,9 @@ const changePassword = async (user: JwtPayload, payload: TChangePassword) => {
   const hashedPassword = await hashPassword(payload.newPassword);
 
   await prisma.user.update({
-    where: { id: userData.id },
+    where: {
+      id: userInfo.id,
+    },
     data: {
       password: hashedPassword,
       needPasswordChange: false,
@@ -110,7 +115,7 @@ const changePassword = async (user: JwtPayload, payload: TChangePassword) => {
 };
 
 const forgotPassword = async (email: string) => {
-  const user = await prisma.user.findUniqueOrThrow({
+  const userInfo = await prisma.user.findUniqueOrThrow({
     where: {
       email,
       status: UserStatus.ACTIVE,
@@ -118,9 +123,9 @@ const forgotPassword = async (email: string) => {
   });
 
   const jwtPayload = {
-    id: user.id,
-    email: user.email,
-    role: user.role,
+    id: userInfo.id,
+    email: userInfo.email,
+    role: userInfo.role,
   };
 
   const resetToken = jwtHelpers.createToken(
@@ -131,7 +136,7 @@ const forgotPassword = async (email: string) => {
 
   const resetPassLink = `${config.verify.reset_pass_ui}?token=${resetToken}`;
 
-  sendEmail(user.email, resetPassLink);
+  sendEmail(userInfo.email, resetPassLink);
 };
 
 const resetPassword = async (token: string, newPassword: string) => {
@@ -148,7 +153,7 @@ const resetPassword = async (token: string, newPassword: string) => {
     throw new AppError(httpStatus.FORBIDDEN, "Forbidden!");
   }
 
-  const user = await prisma.user.findFirstOrThrow({
+  const userInfo = await prisma.user.findFirstOrThrow({
     where: {
       email: validateToken.email,
       status: UserStatus.ACTIVE,
@@ -158,7 +163,9 @@ const resetPassword = async (token: string, newPassword: string) => {
   const hashedPassword = await hashPassword(newPassword);
 
   await prisma.user.update({
-    where: { id: user.id },
+    where: {
+      id: userInfo.id,
+    },
     data: {
       password: hashedPassword,
       needPasswordChange: false,
