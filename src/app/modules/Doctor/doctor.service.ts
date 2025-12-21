@@ -83,68 +83,6 @@ const getDoctorByIdFromDB = async (
   return userInfo;
 };
 
-// const updateDoctorByIdInToDB = async (doctorId: string, payload: any) => {
-//   const { specialties, ...doctorData } = payload;
-
-//   const existingDoctor = await prisma.doctor.findFirstOrThrow({
-//     where: {
-//       id: doctorId,
-//       isDeleted: false,
-//     },
-//   });
-
-//   const result = await prisma.$transaction(async (tx) => {
-//     // Update doctor data
-//     const updatedData = await tx.doctor.update({
-//       where: {
-//         id: doctorId,
-//       },
-//       data: doctorData,
-//       include: {
-//         doctorSpecialties: true,
-//       },
-//     });
-
-//     if (specialties && specialties.length > 0) {
-//       // Get existing specialty IDs for this doctor
-//       const existingSpecialtyIds = existingDoctor.doctorSpecialties.map(
-//         (sp: any) => sp.specialtiesId
-//       );
-
-//       const deleteSpecialtiesIds = specialties.filter(
-//         (sp: any) => sp.isDeleted
-//       );
-//       console.log("deleteSpecialtiesIds", deleteSpecialtiesIds);
-
-//       for (const specialty of deleteSpecialtiesIds) {
-//         await tx.doctorSpecialties.deleteMany({
-//           where: {
-//             doctorId: updatedData.id,
-//             specialtiesId: specialty.specialtiesId,
-//           },
-//         });
-//       }
-
-//       // Create new specialties
-//       const newSpecialtiesIds = specialties.filter((sp: any) => !sp.isDeleted);
-//       console.log("newSpecialtiesIds", newSpecialtiesIds);
-
-//       for (const specialty of newSpecialtiesIds) {
-//         await tx.doctorSpecialties.create({
-//           data: {
-//             doctorId: updatedData.id,
-//             specialtiesId: specialty.specialtiesId,
-//           },
-//         });
-//       }
-//     }
-
-//     return updatedData;
-//   });
-
-//   return result;
-// };
-
 const updateDoctorByIdInToDB = async (doctorId: string, payload: any) => {
   const { specialties, ...doctorData } = payload;
 
