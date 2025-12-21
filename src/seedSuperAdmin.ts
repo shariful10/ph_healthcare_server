@@ -15,10 +15,14 @@ export const seedSuperAdmin = async (): Promise<User | null> => {
   }
 
   try {
-    const existingUser = await prisma.user.findUnique({ where: { email } });
+    const existingUser = await prisma.user.findUnique({
+      where: { email },
+    });
 
     const superAdminName = "Super Admin";
     const superAdminContact = "054824568521";
+    const superAdminPhoto =
+      "https://res.cloudinary.com/shariful10/image/upload/v1766314721/uploads/1766314720905-454935786_3771999546376768_2029919781943990766_n.jpg.jpg";
 
     if (existingUser) {
       const existingAdmin = await prisma.admin.findUnique({ where: { email } });
@@ -28,6 +32,7 @@ export const seedSuperAdmin = async (): Promise<User | null> => {
           data: {
             email,
             name: superAdminName,
+            profilePhoto: superAdminPhoto,
             contactNumber: superAdminContact,
           },
         });
@@ -57,6 +62,7 @@ export const seedSuperAdmin = async (): Promise<User | null> => {
         data: {
           email: user.email,
           name: superAdminName,
+          profilePhoto: superAdminPhoto,
           contactNumber: superAdminContact,
         },
       });

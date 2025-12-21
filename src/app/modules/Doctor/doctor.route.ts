@@ -9,11 +9,7 @@ const router = Router();
 
 router.get("/", DoctorController.getAllDoctors);
 
-router.get(
-  "/:doctorId",
-  auth(UserRole.SUPER_ADMIN, UserRole.ADMIN),
-  DoctorController.getDoctorById
-);
+router.get("/:doctorId", DoctorController.getDoctorById);
 
 router.patch(
   "/:doctorId",

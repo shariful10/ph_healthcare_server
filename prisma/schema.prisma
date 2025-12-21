@@ -85,7 +85,7 @@ model DoctorSpecialties {
 }
 
 model Patient {
-  id            String   @id @unique @default(uuid())
+  id            String   @id @unique @default(cuid())
   name          String
   email         String   @unique
   profilePhoto  String?
