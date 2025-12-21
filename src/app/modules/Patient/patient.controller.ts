@@ -20,6 +20,60 @@ const getAllPatients = catchAsync(async (req, res) => {
   });
 });
 
+const getPatientById = catchAsync(async (req, res) => {
+  const { patientId } = req.params;
+
+  const result = await PatientService.getPatientByIdFromDB(patientId);
+
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    message: "Patient is retrieved successfully!",
+    data: result,
+  });
+});
+
+const updatePatientById = catchAsync(async (req, res) => {
+  const { patientId } = req.params;
+  const payload = req.body;
+
+  const result = await PatientService.updatePatientByIdInToDB(
+    patientId,
+    payload
+  );
+
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    message: "Patient is updated successfully!",
+    data: result,
+  });
+});
+
+const deletePatientById = catchAsync(async (req, res) => {
+  const { patientId } = req.params;
+
+  await PatientService.deletePatientByIdFromDB(patientId);
+
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    message: "Patient is deleted successfully!",
+  });
+});
+
+const softDeletePatientById = catchAsync(async (req, res) => {
+  const { patientId } = req.params;
+
+  await PatientService.softDeletePatientByIdFromDB(patientId);
+
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    message: "Patient is deleted successfully!",
+  });
+});
+
 export const PatientController = {
   getAllPatients,
+  getPatientById,
+  updatePatientById,
+  deletePatientById,
+  softDeletePatientById,
 };
