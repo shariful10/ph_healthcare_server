@@ -83,28 +83,142 @@ const getDoctorByIdFromDB = async (
   return userInfo;
 };
 
-const updateDoctorByIdInToDB = async (
-  doctorId: string,
-  payload: Partial<Doctor>
-): Promise<Doctor> => {
-  await prisma.doctor.findFirstOrThrow({
+// const updateDoctorByIdInToDB = async (doctorId: string, payload: any) => {
+//   const { specialties, ...doctorData } = payload;
+
+//   const existingDoctor = await prisma.doctor.findFirstOrThrow({
+//     where: {
+//       id: doctorId,
+//       isDeleted: false,
+//     },
+//   });
+
+//   const result = await prisma.$transaction(async (tx) => {
+//     // Update doctor data
+//     const updatedData = await tx.doctor.update({
+//       where: {
+//         id: doctorId,
+//       },
+//       data: doctorData,
+//       include: {
+//         doctorSpecialties: true,
+//       },
+//     });
+
+//     if (specialties && specialties.length > 0) {
+//       // Get existing specialty IDs for this doctor
+//       const existingSpecialtyIds = existingDoctor.doctorSpecialties.map(
+//         (sp: any) => sp.specialtiesId
+//       );
+
+//       const deleteSpecialtiesIds = specialties.filter(
+//         (sp: any) => sp.isDeleted
+//       );
+//       console.log("deleteSpecialtiesIds", deleteSpecialtiesIds);
+
+//       for (const specialty of deleteSpecialtiesIds) {
+//         await tx.doctorSpecialties.deleteMany({
+//           where: {
+//             doctorId: updatedData.id,
+//             specialtiesId: specialty.specialtiesId,
+//           },
+//         });
+//       }
+
+//       // Create new specialties
+//       const newSpecialtiesIds = specialties.filter((sp: any) => !sp.isDeleted);
+//       console.log("newSpecialtiesIds", newSpecialtiesIds);
+
+//       for (const specialty of newSpecialtiesIds) {
+//         await tx.doctorSpecialties.create({
+//           data: {
+//             doctorId: updatedData.id,
+//             specialtiesId: specialty.specialtiesId,
+//           },
+//         });
+//       }
+//     }
+
+//     return updatedData;
+//   });
+
+//   return result;
+// };
+
+const updateDoctorByIdInToDB = async (doctorId: string, payload: any) => {
+  const { specialties, ...doctorData } = payload;
+
+  // First, get the current doctor with existing specialties
+  const existingDoctor = await prisma.doctor.findFirstOrThrow({
     where: {
       id: doctorId,
       isDeleted: false,
     },
-  });
-
-  const userInfo = await prisma.doctor.update({
-    where: {
-      id: doctorId,
-    },
-    data: payload,
     include: {
       doctorSpecialties: true,
     },
   });
 
-  return userInfo;
+  const result = await prisma.$transaction(async (tx) => {
+    // Update basic doctor info
+    await tx.doctor.update({
+      where: {
+        id: existingDoctor.id,
+      },
+      data: doctorData,
+    });
+
+    if (specialties && specialties.length > 0) {
+      // Get existing specialty IDs for this doctor
+      const existingSpecialtyIds = existingDoctor.doctorSpecialties.map(
+        (sp) => sp.specialtiesId
+      );
+
+      // Separate specialties into different categories
+      const specialtiesToDelete = specialties.filter((sp: any) => sp.isDeleted);
+
+      const specialtiesToAdd = specialties.filter(
+        (sp: any) =>
+          !sp.isDeleted && !existingSpecialtyIds.includes(sp.specialtiesId)
+      );
+
+      // Delete specialties that are marked as deleted
+      for (const specialty of specialtiesToDelete) {
+        await tx.doctorSpecialties.deleteMany({
+          where: {
+            doctorId: existingDoctor.id,
+            specialtiesId: specialty.specialtiesId,
+          },
+        });
+      }
+
+      // Create only NEW specialties that don't already exist
+      for (const specialty of specialtiesToAdd) {
+        await tx.doctorSpecialties.create({
+          data: {
+            doctorId: existingDoctor.id,
+            specialtiesId: specialty.specialtiesId,
+          },
+        });
+      }
+    }
+
+    // Return the updated doctor with all specialties
+    return await tx.doctor.findUnique({
+      where: {
+        id: existingDoctor.id,
+      },
+      include: {
+        doctorSpecialties: {
+          include: {
+            specialties: true,
+          },
+        },
+      },
+    });
+  });
+
+  return result;
 };
 
 const deleteDoctorByIdFromDB = async (
