@@ -7,11 +7,7 @@ import validateRequest from "../../middlewares/validateRequest";
 
 const router = Router();
 
-router.get(
-  "/",
-  auth(UserRole.SUPER_ADMIN, UserRole.ADMIN),
-  DoctorController.getAllDoctors
-);
+router.get("/", DoctorController.getAllDoctors);
 
 router.get(
   "/:doctorId",
