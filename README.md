@@ -6,16 +6,16 @@ A robust backend API starter pack built with Node.js, Express.js, TypeScript, Zo
 
 ## 🚀 Features
 
-- **Authentication & Authorization**: JWT-based authentication with role-based access control (USER, ADMIN, SUPER_ADMIN)
-- **User Management**: Complete user registration, email verification, profile management with image upload
-- **Subscription System**: Flexible subscription plans with Stripe payment integration
-- **Payment Processing**: Secure payment handling with Stripe webhooks and checkout sessions
-- **File Upload**: Image upload functionality with Cloudinary integration
-- **Email Services**: Automated email notifications using Brevo SMTP for verification and password reset
-- **Database Management**: PostgreSQL with Prisma ORM for type-safe database operations
-- **Error Handling**: Comprehensive error handling with custom error classes and validation
-- **Security**: Password hashing with bcrypt, JWT tokens, request validation, and CORS configuration
-- **Super Admin Seeding**: Automatic super admin creation on application startup
+- **Authentication & Authorization**: JWT-based authentication with role-based access control (USER, ADMIN, SUPER_ADMIN).
+- **User Management**: Complete user registration, email verification, profile management with image upload.
+- **Subscription System**: Flexible subscription plans with Stripe payment integration.
+- **Payment Processing**: Secure payment handling with Stripe webhooks and checkout sessions.
+- **File Upload**: Image upload functionality with Cloudinary integration.
+- **Email Services**: Automated email notifications using Brevo SMTP for verification and password reset.
+- **Database Management**: PostgreSQL with Prisma ORM for type-safe database operations.
+- **Error Handling**: Comprehensive error handling with custom error classes and validation.
+- **Security**: Password hashing with bcrypt, JWT tokens, request validation, and CORS configuration.
+- **Super Admin Seeding**: Automatic super admin creation on application startup.
 
 ## 🛠 Tech Stack
 
