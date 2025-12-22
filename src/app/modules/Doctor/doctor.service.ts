@@ -8,19 +8,34 @@ const getAllDoctorsFromDB = async (
   query: Record<string, unknown>,
   options: IOptions
 ) => {
-  const { searchTerm, ...filterData } = query;
+  const { searchTerm, specialties, ...filterData } = query;
   const { page, limit, skip } = paginationHelper.calculatePagination(options);
 
   const andConditions: Prisma.DoctorWhereInput[] = [];
 
-  if (query.searchTerm) {
+  if (searchTerm) {
     andConditions.push({
       OR: doctorSearchableFields.map((field) => ({
         [field]: {
-          contains: query.searchTerm as string,
+          contains: searchTerm,
           mode: "insensitive",
         },
       })),
+    });
+  }
+
+  if (specialties) {
+    andConditions.push({
+      doctorSpecialties: {
+        some: {
+          specialties: {
+            title: {
+              contains: specialties as string,
+              mode: "insensitive",
+            },
+          },
+        },
+      },
     });
   }
 
@@ -40,6 +55,13 @@ const getAllDoctorsFromDB = async (
 
   const doctorInfo = await prisma.doctor.findMany({
     where: whereConditions,
+    include: {
+      doctorSpecialties: {
+        include: {
+          specialties: true,
+        },
+      },
+    },
     skip,
     take: limit,
     orderBy:
@@ -77,6 +99,13 @@ const getDoctorByIdFromDB = async (
     where: {
       id: doctorId,
       isDeleted: false,
+    },
+    include: {
+      doctorSpecialties: {
+        include: {
+          specialties: true,
+        },
+      },
     },
   });
 
