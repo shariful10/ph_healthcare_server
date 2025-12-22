@@ -7,8 +7,7 @@ let server: Server;
 
 const main = async () => {
   try {
-    // Seed Super Admin
-    await seedSuperAdmin();
+    await seedSuperAdmin(); // Seed Super Admin
 
     server = app.listen(config.port, () => {
       console.log(
@@ -28,7 +27,7 @@ const shutdown = () => {
 
   if (server) {
     server.close(() => {
-      console.log("Servers closed");
+      console.log("Servers closed!");
       process.exit(0);
     });
   } else {

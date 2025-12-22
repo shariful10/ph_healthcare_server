@@ -50,7 +50,7 @@ const createAdminIntoDB = async (payload: IAdminPayload): Promise<Admin> => {
     role: UserRole.ADMIN,
   };
 
-  const result = await prisma.$transaction(async (tx) => {
+  const adminInfo = await prisma.$transaction(async (tx) => {
     await tx.user.create({
       data: userData,
     });
@@ -62,7 +62,7 @@ const createAdminIntoDB = async (payload: IAdminPayload): Promise<Admin> => {
     return createAdmin;
   });
 
-  return result;
+  return adminInfo;
 };
 
 const createDoctorIntoDB = async (payload: IDoctorPayload): Promise<Doctor> => {
@@ -96,7 +96,7 @@ const createDoctorIntoDB = async (payload: IDoctorPayload): Promise<Doctor> => {
     role: UserRole.DOCTOR,
   };
 
-  const result = await prisma.$transaction(async (tx) => {
+  const doctorInfo = await prisma.$transaction(async (tx) => {
     await tx.user.create({
       data: userData,
     });
@@ -108,7 +108,7 @@ const createDoctorIntoDB = async (payload: IDoctorPayload): Promise<Doctor> => {
     return createDoctor;
   });
 
-  return result;
+  return doctorInfo;
 };
 
 const createPatientIntoDB = async (
@@ -144,7 +144,7 @@ const createPatientIntoDB = async (
     role: UserRole.PATIENT,
   };
 
-  const result = await prisma.$transaction(async (tx) => {
+  const patientInfo = await prisma.$transaction(async (tx) => {
     await tx.user.create({
       data: userData,
     });
@@ -156,7 +156,7 @@ const createPatientIntoDB = async (
     return createPatient;
   });
 
-  return result;
+  return patientInfo;
 };
 
 const getAllUsersFromDB = async (
@@ -192,7 +192,7 @@ const getAllUsersFromDB = async (
   const whereConditions: Prisma.UserWhereInput =
     andConditions.length > 0 ? { AND: andConditions } : {};
 
-  const result = await prisma.user.findMany({
+  const userInfo = await prisma.user.findMany({
     where: whereConditions,
     skip,
     take: limit,
@@ -224,7 +224,7 @@ const getAllUsersFromDB = async (
       total,
       totalPages: Math.ceil(total / limit),
     },
-    data: result,
+    data: userInfo,
   };
 };
 
@@ -252,7 +252,7 @@ const changeUserStatusIntoDB = async (userId: string, status: UserStatus) => {
     },
   });
 
-  const updatedUser = await prisma.$transaction(async (tx) => {
+  const userInfo = await prisma.$transaction(async (tx) => {
     const updatedStatus = await tx.user.update({
       where: {
         id: userId,
@@ -317,7 +317,7 @@ const changeUserStatusIntoDB = async (userId: string, status: UserStatus) => {
     return updatedStatus;
   });
 
-  return updatedUser;
+  return userInfo;
 };
 
 const getMyProfileFromDB = async (email: string) => {

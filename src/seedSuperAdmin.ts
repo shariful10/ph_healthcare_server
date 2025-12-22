@@ -11,6 +11,7 @@ export const seedSuperAdmin = async (): Promise<User | null> => {
     console.warn(
       "Super admin credentials are not configured. Skipping seeding."
     );
+
     return null;
   }
 

@@ -38,7 +38,7 @@ const getAllDoctorsFromDB = async (
 
   const whereConditions: Prisma.DoctorWhereInput = { AND: andConditions };
 
-  const result = await prisma.doctor.findMany({
+  const doctorInfo = await prisma.doctor.findMany({
     where: whereConditions,
     skip,
     take: limit,
@@ -59,7 +59,7 @@ const getAllDoctorsFromDB = async (
       total,
       totalPages: Math.ceil(total / limit),
     },
-    data: result,
+    data: doctorInfo,
   };
 };
 
@@ -73,14 +73,14 @@ const getDoctorByIdFromDB = async (
     },
   });
 
-  const userInfo = await prisma.doctor.findUnique({
+  const doctorInfo = await prisma.doctor.findUnique({
     where: {
       id: doctorId,
       isDeleted: false,
     },
   });
 
-  return userInfo;
+  return doctorInfo;
 };
 
 const updateDoctorByIdInToDB = async (doctorId: string, payload: any) => {
@@ -97,7 +97,7 @@ const updateDoctorByIdInToDB = async (doctorId: string, payload: any) => {
     },
   });
 
-  const result = await prisma.$transaction(async (tx) => {
+  const doctorInfo = await prisma.$transaction(async (tx) => {
     // Update basic doctor info
     await tx.doctor.update({
       where: {
@@ -156,7 +156,7 @@ const updateDoctorByIdInToDB = async (doctorId: string, payload: any) => {
     });
   });
 
-  return result;
+  return doctorInfo;
 };
 
 const deleteDoctorByIdFromDB = async (
@@ -169,7 +169,7 @@ const deleteDoctorByIdFromDB = async (
     },
   });
 
-  const userInfo = await prisma.$transaction(async (tx) => {
+  const doctorInfo = await prisma.$transaction(async (tx) => {
     const deletedData = await tx.doctor.delete({
       where: {
         id: doctorId,
@@ -186,7 +186,7 @@ const deleteDoctorByIdFromDB = async (
     return deletedData;
   });
 
-  return userInfo;
+  return doctorInfo;
 };
 
 const softDeleteDoctorByIdFromDB = async (
@@ -199,7 +199,7 @@ const softDeleteDoctorByIdFromDB = async (
     },
   });
 
-  const userInfo = await prisma.$transaction(async (tx) => {
+  const doctorInfo = await prisma.$transaction(async (tx) => {
     const deletedData = await tx.doctor.update({
       where: {
         id: doctorId,
@@ -221,7 +221,7 @@ const softDeleteDoctorByIdFromDB = async (
     return deletedData;
   });
 
-  return userInfo;
+  return doctorInfo;
 };
 
 export const DoctorService = {

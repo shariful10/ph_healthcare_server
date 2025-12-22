@@ -8,7 +8,7 @@ const uploadFile = catchAsync(async (req, res) => {
 
   sendResponse(res, {
     statusCode: httpStatus.OK,
-    message: "File uploaded successfully!",
+    message: "File uploaded successfully.",
     data: {
       fileUrl: result,
     },
@@ -20,7 +20,7 @@ const uploadMultipleFiles = catchAsync(async (req, res) => {
 
   sendResponse(res, {
     statusCode: httpStatus.OK,
-    message: "Files uploaded successfully!",
+    message: "Files uploaded successfully.",
     data: {
       fileUrls: result,
     },

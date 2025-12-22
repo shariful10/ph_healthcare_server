@@ -14,7 +14,7 @@ const getAllAdmins = catchAsync(async (req, res) => {
 
   sendResponse(res, {
     statusCode: httpStatus.OK,
-    message: "Admins are retrieved successfully!",
+    message: "Admins are retrieved successfully.",
     meta: result.meta,
     data: result.data,
   });
@@ -27,7 +27,7 @@ const getAdminById = catchAsync(async (req, res) => {
 
   sendResponse(res, {
     statusCode: httpStatus.OK,
-    message: "Admin is retrieved successfully!",
+    message: "Admin is retrieved successfully.",
     data: result,
   });
 });
@@ -40,7 +40,7 @@ const updateAdminById = catchAsync(async (req, res) => {
 
   sendResponse(res, {
     statusCode: httpStatus.OK,
-    message: "Admin is updated successfully!",
+    message: "Admin is updated successfully.",
     data: result,
   });
 });
@@ -52,7 +52,7 @@ const deleteAdminById = catchAsync(async (req, res) => {
 
   sendResponse(res, {
     statusCode: httpStatus.OK,
-    message: "Admin is deleted successfully!",
+    message: "Admin is deleted successfully.",
   });
 });
 
@@ -63,7 +63,7 @@ const softDeleteAdminById = catchAsync(async (req, res) => {
 
   sendResponse(res, {
     statusCode: httpStatus.OK,
-    message: "Admin is deleted successfully!",
+    message: "Admin is deleted successfully.",
   });
 });
 

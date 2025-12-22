@@ -38,7 +38,7 @@ const getAllPatientsFromDB = async (
 
   const whereConditions: Prisma.PatientWhereInput = { AND: andConditions };
 
-  const result = await prisma.patient.findMany({
+  const patientInfo = await prisma.patient.findMany({
     where: whereConditions,
     skip,
     take: limit,
@@ -59,7 +59,7 @@ const getAllPatientsFromDB = async (
       total,
       totalPages: Math.ceil(total / limit),
     },
-    data: result,
+    data: patientInfo,
   };
 };
 
@@ -73,14 +73,14 @@ const getPatientByIdFromDB = async (
     },
   });
 
-  const userInfo = await prisma.patient.findUnique({
+  const patientInfo = await prisma.patient.findUnique({
     where: {
       id: patientId,
       isDeleted: false,
     },
   });
 
-  return userInfo;
+  return patientInfo;
 };
 
 const updatePatientByIdInToDB = async (
@@ -94,14 +94,14 @@ const updatePatientByIdInToDB = async (
     },
   });
 
-  const userInfo = await prisma.patient.update({
+  const patientInfo = await prisma.patient.update({
     where: {
       id: patientId,
     },
     data: payload,
   });
 
-  return userInfo;
+  return patientInfo;
 };
 
 const deletePatientByIdFromDB = async (
@@ -114,7 +114,7 @@ const deletePatientByIdFromDB = async (
     },
   });
 
-  const userInfo = await prisma.$transaction(async (tx) => {
+  const patientInfo = await prisma.$transaction(async (tx) => {
     const deletedData = await tx.patient.delete({
       where: {
         id: patientId,
@@ -131,7 +131,7 @@ const deletePatientByIdFromDB = async (
     return deletedData;
   });
 
-  return userInfo;
+  return patientInfo;
 };
 
 const softDeletePatientByIdFromDB = async (
@@ -144,7 +144,7 @@ const softDeletePatientByIdFromDB = async (
     },
   });
 
-  const userInfo = await prisma.$transaction(async (tx) => {
+  const patientInfo = await prisma.$transaction(async (tx) => {
     const deletedData = await tx.patient.update({
       where: {
         id: patientId,
@@ -166,7 +166,7 @@ const softDeletePatientByIdFromDB = async (
     return deletedData;
   });
 
-  return userInfo;
+  return patientInfo;
 };
 
 export const PatientService = {
