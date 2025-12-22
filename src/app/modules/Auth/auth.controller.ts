@@ -3,6 +3,7 @@ import catchAsync from "../../utils/catchAsync";
 import { httpStatus } from "../../utils/httpStatus";
 import sendResponse from "../../utils/sendResponse";
 
+// Login User
 const login = catchAsync(async (req, res) => {
   const { email, password } = req.body;
 
@@ -27,6 +28,7 @@ const login = catchAsync(async (req, res) => {
   });
 });
 
+// Refresh Token
 const refreshToken = catchAsync(async (req, res) => {
   const { refreshToken } = req.cookies;
 
@@ -39,6 +41,7 @@ const refreshToken = catchAsync(async (req, res) => {
   });
 });
 
+// Change Password
 const changePassword = catchAsync(async (req, res) => {
   await AuthService.changePassword(req.user, req.body);
 
@@ -48,6 +51,7 @@ const changePassword = catchAsync(async (req, res) => {
   });
 });
 
+// Forgot Password
 const forgotPassword = catchAsync(async (req, res) => {
   const { email } = req.body;
 
@@ -59,6 +63,7 @@ const forgotPassword = catchAsync(async (req, res) => {
   });
 });
 
+// Reset Password
 const resetPassword = catchAsync(async (req, res) => {
   const { newPassword } = req.body;
   const token = req.headers.authorization;

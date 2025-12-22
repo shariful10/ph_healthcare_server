@@ -1,15 +1,9 @@
-import {
-  Prisma,
-  Patient,
-  UserStatus,
-  MedicalReport,
-  PatientHealthRecord,
-} from "@prisma/client";
 import prisma from "../../utils/prisma";
+import { IPatient } from "./patient.interface";
 import { IOptions } from "../../interface/pagination";
 import { patientSearchableFields } from "./patient.constant";
+import { Prisma, Patient, UserStatus } from "@prisma/client";
 import { paginationHelper } from "../../helpers/paginationHelper";
-import { IPatient } from "./patient.interface";
 
 // Get All Patients
 const getAllPatientsFromDB = async (
@@ -75,6 +69,7 @@ const getAllPatientsFromDB = async (
   };
 };
 
+// Get Patient by ID
 const getPatientByIdFromDB = async (
   patientId: string
 ): Promise<Patient | null> => {
@@ -99,6 +94,7 @@ const getPatientByIdFromDB = async (
   return patientInfo;
 };
 
+// Update Patient by ID
 const updatePatientByIdInToDB = async (
   patientId: string,
   payload: Partial<IPatient>
@@ -171,6 +167,7 @@ const updatePatientByIdInToDB = async (
   return result;
 };
 
+// Delete Patient by ID
 const deletePatientByIdFromDB = async (
   patientId: string
 ): Promise<Patient | null> => {
@@ -201,6 +198,7 @@ const deletePatientByIdFromDB = async (
   return patientInfo;
 };
 
+// Soft Delete Patient by ID
 const softDeletePatientByIdFromDB = async (
   patientId: string
 ): Promise<Patient | null> => {

@@ -6,6 +6,7 @@ import sendResponse from "../../utils/sendResponse";
 import { metaFields } from "../../interface/metaFields";
 import { doctorFilterableFields } from "./doctor.constant";
 
+// Get All Doctors
 const getAllDoctors = catchAsync(async (req, res) => {
   const query = pick(req.query, doctorFilterableFields);
   const options = pick(req.query, metaFields);
@@ -20,6 +21,7 @@ const getAllDoctors = catchAsync(async (req, res) => {
   });
 });
 
+// Get Doctor by ID
 const getDoctorById = catchAsync(async (req, res) => {
   const { doctorId } = req.params;
 
@@ -32,6 +34,7 @@ const getDoctorById = catchAsync(async (req, res) => {
   });
 });
 
+// Update Doctor by ID
 const updateDoctorById = catchAsync(async (req, res) => {
   const { doctorId } = req.params;
   const payload = req.body;
@@ -45,6 +48,7 @@ const updateDoctorById = catchAsync(async (req, res) => {
   });
 });
 
+// Delete Doctor by ID
 const deleteDoctorById = catchAsync(async (req, res) => {
   const { doctorId } = req.params;
 
@@ -56,6 +60,7 @@ const deleteDoctorById = catchAsync(async (req, res) => {
   });
 });
 
+// Soft Delete Doctor by ID
 const softDeleteDoctorById = catchAsync(async (req, res) => {
   const { doctorId } = req.params;
 

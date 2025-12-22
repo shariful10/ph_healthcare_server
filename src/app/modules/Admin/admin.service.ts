@@ -4,6 +4,7 @@ import { adminSearchableFields } from "./admin.constant";
 import { Admin, Prisma, UserStatus } from "@prisma/client";
 import { paginationHelper } from "../../helpers/paginationHelper";
 
+// Get all admins
 const getAllAdminsFromDB = async (
   query: Record<string, unknown>,
   options: IOptions
@@ -63,6 +64,7 @@ const getAllAdminsFromDB = async (
   };
 };
 
+// Get admin by ID
 const getAdminByIdFromDB = async (adminId: string): Promise<Admin | null> => {
   await prisma.admin.findFirstOrThrow({
     where: {
@@ -81,6 +83,7 @@ const getAdminByIdFromDB = async (adminId: string): Promise<Admin | null> => {
   return adminInfo;
 };
 
+// Update admin by ID
 const updateAdminByIdInToDB = async (
   adminId: string,
   payload: Partial<Admin>
@@ -100,6 +103,7 @@ const updateAdminByIdInToDB = async (
   return adminInfo;
 };
 
+// Delete admin by ID
 const deleteAdminByIdFromDB = async (
   adminId: string
 ): Promise<Admin | null> => {
@@ -127,6 +131,7 @@ const deleteAdminByIdFromDB = async (
   return adminInfo;
 };
 
+// Soft delete admin by ID
 const softDeleteAdminByIdFromDB = async (
   adminId: string
 ): Promise<Admin | null> => {
