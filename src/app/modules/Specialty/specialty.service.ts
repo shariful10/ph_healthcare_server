@@ -4,6 +4,7 @@ import { IOptions } from "../../interface/pagination";
 import { specialtySearchableFields } from "./specialty.constant";
 import { paginationHelper } from "../../helpers/paginationHelper";
 
+// Create Specialty
 const createSpecialtyInToDB = async (payload: Specialties) => {
   const result = await prisma.specialties.create({
     data: payload,
@@ -12,6 +13,7 @@ const createSpecialtyInToDB = async (payload: Specialties) => {
   return result;
 };
 
+// Get All Specialties
 const getAllSpecialtiesFromDB = async (
   query: Record<string, unknown>,
   options: IOptions
@@ -69,6 +71,7 @@ const getAllSpecialtiesFromDB = async (
   };
 };
 
+// Get Specialty by ID
 const getSpecialtyByIdFromDB = async (specialtyId: string) => {
   const result = await prisma.specialties.findUniqueOrThrow({
     where: {
@@ -79,6 +82,7 @@ const getSpecialtyByIdFromDB = async (specialtyId: string) => {
   return result;
 };
 
+// Update Specialty by ID
 const updateSpecialtyInToDB = async (
   specialtyId: string,
   payload: Partial<Specialties>
@@ -97,6 +101,7 @@ const updateSpecialtyInToDB = async (
   return result;
 };
 
+// Delete Specialty by ID
 const deleteSpecialtyByIdFromDB = async (specialtyId: string) => {
   await prisma.specialties.findUniqueOrThrow({
     where: {

@@ -10,6 +10,7 @@ import { jwtHelpers } from "../../helpers/jwtHelpers";
 import { hashPassword } from "../../helpers/hashPassword";
 import { passwordCompare } from "../../helpers/comparePasswords";
 
+// Login User
 const loginUser = async (email: string, password: string) => {
   const userInfo = await prisma.user.findUniqueOrThrow({
     where: {
@@ -49,6 +50,7 @@ const loginUser = async (email: string, password: string) => {
   };
 };
 
+// Refresh Token
 const refreshToken = async (token: string) => {
   if (!token) {
     throw new AppError(httpStatus.UNAUTHORIZED, "You are not authorized!");
@@ -82,6 +84,7 @@ const refreshToken = async (token: string) => {
   };
 };
 
+// Change Password
 const changePassword = async (user: JwtPayload, payload: TChangePassword) => {
   const userInfo = await prisma.user.findFirstOrThrow({
     where: {
@@ -114,6 +117,7 @@ const changePassword = async (user: JwtPayload, payload: TChangePassword) => {
   return;
 };
 
+// Forgot Password
 const forgotPassword = async (email: string) => {
   const userInfo = await prisma.user.findUniqueOrThrow({
     where: {
@@ -139,6 +143,7 @@ const forgotPassword = async (email: string) => {
   sendEmail(userInfo.email, resetPassLink);
 };
 
+// Reset Password
 const resetPassword = async (token: string, newPassword: string) => {
   if (!token) {
     throw new AppError(httpStatus.BAD_REQUEST, "Invalid token!");

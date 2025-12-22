@@ -6,6 +6,7 @@ import sendResponse from "../../utils/sendResponse";
 import { metaFields } from "../../interface/metaFields";
 import { adminFilterableFields } from "./admin.constant";
 
+// Get all admins
 const getAllAdmins = catchAsync(async (req, res) => {
   const query = pick(req.query, adminFilterableFields);
   const options = pick(req.query, metaFields);
@@ -20,6 +21,7 @@ const getAllAdmins = catchAsync(async (req, res) => {
   });
 });
 
+// Get admin by ID
 const getAdminById = catchAsync(async (req, res) => {
   const { adminId } = req.params;
 
@@ -32,6 +34,7 @@ const getAdminById = catchAsync(async (req, res) => {
   });
 });
 
+// Update admin by ID
 const updateAdminById = catchAsync(async (req, res) => {
   const { adminId } = req.params;
   const payload = req.body;
@@ -45,6 +48,7 @@ const updateAdminById = catchAsync(async (req, res) => {
   });
 });
 
+// Delete admin by ID
 const deleteAdminById = catchAsync(async (req, res) => {
   const { adminId } = req.params;
 
@@ -56,6 +60,7 @@ const deleteAdminById = catchAsync(async (req, res) => {
   });
 });
 
+// Soft delete admin by ID
 const softDeleteAdminById = catchAsync(async (req, res) => {
   const { adminId } = req.params;
 

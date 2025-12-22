@@ -69,6 +69,7 @@ const getAllPatientsFromDB = async (
   };
 };
 
+// Get Patient by ID
 const getPatientByIdFromDB = async (
   patientId: string
 ): Promise<Patient | null> => {
@@ -93,6 +94,7 @@ const getPatientByIdFromDB = async (
   return patientInfo;
 };
 
+// Update Patient by ID
 const updatePatientByIdInToDB = async (
   patientId: string,
   payload: Partial<IPatient>
@@ -165,6 +167,7 @@ const updatePatientByIdInToDB = async (
   return result;
 };
 
+// Delete Patient by ID
 const deletePatientByIdFromDB = async (
   patientId: string
 ): Promise<Patient | null> => {
@@ -195,6 +198,7 @@ const deletePatientByIdFromDB = async (
   return patientInfo;
 };
 
+// Soft Delete Patient by ID
 const softDeletePatientByIdFromDB = async (
   patientId: string
 ): Promise<Patient | null> => {

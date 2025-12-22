@@ -5,6 +5,7 @@ import { doctorSearchableFields } from "./doctor.constant";
 import { Doctor, Prisma, UserStatus } from "@prisma/client";
 import { paginationHelper } from "../../helpers/paginationHelper";
 
+// Get All Doctors
 const getAllDoctorsFromDB = async (
   query: Record<string, unknown>,
   options: IOptions
@@ -86,6 +87,7 @@ const getAllDoctorsFromDB = async (
   };
 };
 
+// Get Doctor by ID
 const getDoctorByIdFromDB = async (
   doctorId: string
 ): Promise<Doctor | null> => {
@@ -113,6 +115,7 @@ const getDoctorByIdFromDB = async (
   return doctorInfo;
 };
 
+// Update Doctor by ID
 const updateDoctorByIdInToDB = async (
   doctorId: string,
   payload: Partial<IDoctor>
@@ -198,6 +201,7 @@ const updateDoctorByIdInToDB = async (
   return doctorInfo;
 };
 
+// Delete Doctor by ID
 const deleteDoctorByIdFromDB = async (
   doctorId: string
 ): Promise<Doctor | null> => {
@@ -228,6 +232,7 @@ const deleteDoctorByIdFromDB = async (
   return doctorInfo;
 };
 
+// Soft Delete Doctor by ID
 const softDeleteDoctorByIdFromDB = async (
   doctorId: string
 ): Promise<Doctor | null> => {

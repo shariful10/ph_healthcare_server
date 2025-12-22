@@ -19,6 +19,7 @@ import { userSearchableFields } from "./user.constants";
 import { hashPassword } from "../../helpers/hashPassword";
 import { paginationHelper } from "../../helpers/paginationHelper";
 
+// Create Admin User
 const createAdminIntoDB = async (payload: IAdminPayload): Promise<Admin> => {
   const isUserExistByEmail = await prisma.user.findUnique({
     where: { email: payload.admin.email },
@@ -65,6 +66,7 @@ const createAdminIntoDB = async (payload: IAdminPayload): Promise<Admin> => {
   return adminInfo;
 };
 
+// Create Doctor User
 const createDoctorIntoDB = async (payload: IDoctorPayload): Promise<Doctor> => {
   const isUserExistByEmail = await prisma.user.findUnique({
     where: { email: payload.doctor.email },
@@ -111,6 +113,7 @@ const createDoctorIntoDB = async (payload: IDoctorPayload): Promise<Doctor> => {
   return doctorInfo;
 };
 
+// Create Patient User
 const createPatientIntoDB = async (
   payload: IPatientPayload
 ): Promise<Patient> => {
@@ -159,6 +162,7 @@ const createPatientIntoDB = async (
   return patientInfo;
 };
 
+// Get All Users
 const getAllUsersFromDB = async (
   query: Record<string, unknown>,
   options: IOptions
@@ -228,6 +232,7 @@ const getAllUsersFromDB = async (
   };
 };
 
+// Get User By ID
 const getSingleUserByIdFromDB = async (userId: string) => {
   const userInfo = await prisma.user.findUnique({
     where: { id: userId },
@@ -245,6 +250,7 @@ const getSingleUserByIdFromDB = async (userId: string) => {
   return rest;
 };
 
+// Change User Status
 const changeUserStatusIntoDB = async (userId: string, status: UserStatus) => {
   await prisma.user.findUniqueOrThrow({
     where: {
@@ -320,6 +326,7 @@ const changeUserStatusIntoDB = async (userId: string, status: UserStatus) => {
   return userInfo;
 };
 
+// Get My Profile
 const getMyProfileFromDB = async (email: string) => {
   const userInfo = await prisma.user.findUniqueOrThrow({
     where: {
@@ -364,6 +371,7 @@ const getMyProfileFromDB = async (email: string) => {
   };
 };
 
+// Update My Profile
 const updateMyProfileInDB = async (
   email: string,
   Payload: Partial<IAdminPayload | IDoctorPayload | IPatientPayload>

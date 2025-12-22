@@ -6,6 +6,7 @@ import { httpStatus } from "../../utils/httpStatus";
 import { metaFields } from "../../interface/metaFields";
 import { userFilterableFields } from "./user.constants";
 
+// Create Admin User
 const createAdmin = catchAsync(async (req, res) => {
   const result = await UserService.createAdminIntoDB(req.body);
 
@@ -16,6 +17,7 @@ const createAdmin = catchAsync(async (req, res) => {
   });
 });
 
+// Create Doctor User
 const createDoctor = catchAsync(async (req, res) => {
   const result = await UserService.createDoctorIntoDB(req.body);
 
@@ -26,6 +28,7 @@ const createDoctor = catchAsync(async (req, res) => {
   });
 });
 
+// Create Patient User
 const createPatient = catchAsync(async (req, res) => {
   const result = await UserService.createPatientIntoDB(req.body);
 
@@ -36,6 +39,7 @@ const createPatient = catchAsync(async (req, res) => {
   });
 });
 
+// Get All Users
 const getAllUsers = catchAsync(async (req, res) => {
   const query = pick(req.query, userFilterableFields);
   const options = pick(req.query, metaFields);
@@ -50,6 +54,7 @@ const getAllUsers = catchAsync(async (req, res) => {
   });
 });
 
+// Get User By ID
 const getSingleUserById = catchAsync(async (req, res) => {
   const { userId } = req.params;
 
@@ -62,6 +67,7 @@ const getSingleUserById = catchAsync(async (req, res) => {
   });
 });
 
+// Change User Status
 const changeUserStatus = catchAsync(async (req, res) => {
   const { status } = req.body;
   const { userId } = req.params;
@@ -75,6 +81,7 @@ const changeUserStatus = catchAsync(async (req, res) => {
   });
 });
 
+// Get My Profile
 const getMyProfile = catchAsync(async (req, res) => {
   const { email } = req.user;
 
@@ -87,6 +94,7 @@ const getMyProfile = catchAsync(async (req, res) => {
   });
 });
 
+// Update My Profile
 const updateMyProfile = catchAsync(async (req, res) => {
   const { email } = req.user;
   const Payload = req.body;

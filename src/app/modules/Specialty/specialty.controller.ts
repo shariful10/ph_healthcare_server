@@ -6,6 +6,7 @@ import { SpecialtyService } from "./specialty.service";
 import { metaFields } from "../../interface/metaFields";
 import { specialtyFilterableFields } from "./specialty.constant";
 
+// Create Specialty
 const createSpecialty = catchAsync(async (req, res) => {
   const result = await SpecialtyService.createSpecialtyInToDB(req.body);
 
@@ -16,6 +17,7 @@ const createSpecialty = catchAsync(async (req, res) => {
   });
 });
 
+// Get All Specialties
 const getAllSpecialties = catchAsync(async (req, res) => {
   const query = pick(req.query, specialtyFilterableFields);
   const options = pick(req.query, metaFields);
@@ -30,6 +32,7 @@ const getAllSpecialties = catchAsync(async (req, res) => {
   });
 });
 
+// Get Specialty by ID
 const getSpecialtyById = catchAsync(async (req, res) => {
   const { specialtyId } = req.params;
 
@@ -42,6 +45,7 @@ const getSpecialtyById = catchAsync(async (req, res) => {
   });
 });
 
+// Update Specialty by ID
 const updateSpecialty = catchAsync(async (req, res) => {
   const { specialtyId } = req.params;
   const payload = req.body;
@@ -58,6 +62,7 @@ const updateSpecialty = catchAsync(async (req, res) => {
   });
 });
 
+// Delete Specialty by ID
 const deleteSpecialty = catchAsync(async (req, res) => {
   const { specialtyId } = req.params;
 
