@@ -11,7 +11,7 @@ const createSpecialty = catchAsync(async (req, res) => {
 
   sendResponse(res, {
     statusCode: httpStatus.OK,
-    message: "Specialty created successfully!",
+    message: "Specialty created successfully.",
     data: result,
   });
 });
@@ -24,7 +24,7 @@ const getAllSpecialties = catchAsync(async (req, res) => {
 
   sendResponse(res, {
     statusCode: httpStatus.OK,
-    message: "Specialties retrieved successfully!",
+    message: "Specialties retrieved successfully.",
     meta: result.meta,
     data: result.data,
   });
@@ -37,7 +37,7 @@ const getSpecialtyById = catchAsync(async (req, res) => {
 
   sendResponse(res, {
     statusCode: httpStatus.OK,
-    message: "Specialty retrieved successfully!",
+    message: "Specialty retrieved successfully.",
     data: result,
   });
 });
@@ -53,7 +53,7 @@ const updateSpecialty = catchAsync(async (req, res) => {
 
   sendResponse(res, {
     statusCode: httpStatus.OK,
-    message: "Specialty updated successfully!",
+    message: "Specialty updated successfully.",
     data: result,
   });
 });
@@ -65,7 +65,7 @@ const deleteSpecialty = catchAsync(async (req, res) => {
 
   sendResponse(res, {
     statusCode: httpStatus.OK,
-    message: "Specialty deleted successfully!",
+    message: "Specialty deleted successfully.",
   });
 });
 

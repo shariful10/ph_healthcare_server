@@ -14,7 +14,7 @@ const getAllDoctors = catchAsync(async (req, res) => {
 
   sendResponse(res, {
     statusCode: httpStatus.OK,
-    message: "Doctors are retrieved successfully!",
+    message: "Doctors are retrieved successfully.",
     meta: result.meta,
     data: result.data,
   });
@@ -27,7 +27,7 @@ const getDoctorById = catchAsync(async (req, res) => {
 
   sendResponse(res, {
     statusCode: httpStatus.OK,
-    message: "Doctor is retrieved successfully!",
+    message: "Doctor is retrieved successfully.",
     data: result,
   });
 });
@@ -40,7 +40,7 @@ const updateDoctorById = catchAsync(async (req, res) => {
 
   sendResponse(res, {
     statusCode: httpStatus.OK,
-    message: "Doctor is updated successfully!",
+    message: "Doctor is updated successfully.",
     data: result,
   });
 });
@@ -52,7 +52,7 @@ const deleteDoctorById = catchAsync(async (req, res) => {
 
   sendResponse(res, {
     statusCode: httpStatus.OK,
-    message: "Doctor is deleted successfully!",
+    message: "Doctor is deleted successfully.",
   });
 });
 
@@ -63,7 +63,7 @@ const softDeleteDoctorById = catchAsync(async (req, res) => {
 
   sendResponse(res, {
     statusCode: httpStatus.OK,
-    message: "Doctor is soft deleted successfully!",
+    message: "Doctor is soft deleted successfully.",
   });
 });
 

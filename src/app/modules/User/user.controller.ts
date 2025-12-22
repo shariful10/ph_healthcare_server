@@ -11,7 +11,7 @@ const createAdmin = catchAsync(async (req, res) => {
 
   sendResponse(res, {
     statusCode: httpStatus.CREATED,
-    message: "Admin created successfully!",
+    message: "Admin created successfully.",
     data: result,
   });
 });
@@ -21,7 +21,7 @@ const createDoctor = catchAsync(async (req, res) => {
 
   sendResponse(res, {
     statusCode: httpStatus.CREATED,
-    message: "Doctor created successfully!",
+    message: "Doctor created successfully.",
     data: result,
   });
 });
@@ -31,7 +31,7 @@ const createPatient = catchAsync(async (req, res) => {
 
   sendResponse(res, {
     statusCode: httpStatus.CREATED,
-    message: "Patient created successfully!",
+    message: "Patient created successfully.",
     data: result,
   });
 });
@@ -44,7 +44,7 @@ const getAllUsers = catchAsync(async (req, res) => {
 
   sendResponse(res, {
     statusCode: httpStatus.OK,
-    message: "Users retrieved successfully!",
+    message: "Users retrieved successfully.",
     meta: result.meta,
     data: result.data,
   });
@@ -57,7 +57,7 @@ const getSingleUserById = catchAsync(async (req, res) => {
 
   sendResponse(res, {
     statusCode: httpStatus.OK,
-    message: "User retrieved successfully!",
+    message: "User retrieved successfully.",
     data: result,
   });
 });
