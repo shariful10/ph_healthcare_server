@@ -1,9 +1,16 @@
+import {
+  Prisma,
+  Patient,
+  UserStatus,
+  MedicalReport,
+  PatientHealthRecord,
+} from "@prisma/client";
 import prisma from "../../utils/prisma";
 import { IOptions } from "../../interface/pagination";
 import { patientSearchableFields } from "./patient.constant";
-import { Patient, Prisma, UserStatus } from "@prisma/client";
 import { paginationHelper } from "../../helpers/paginationHelper";
 
+// Get All Patients
 const getAllPatientsFromDB = async (
   query: Record<string, unknown>,
   options: IOptions
@@ -40,6 +47,10 @@ const getAllPatientsFromDB = async (
 
   const patientInfo = await prisma.patient.findMany({
     where: whereConditions,
+    include: {
+      patientHealthRecord: true,
+      medicalReports: true,
+    },
     skip,
     take: limit,
     orderBy:
@@ -78,6 +89,10 @@ const getPatientByIdFromDB = async (
       id: patientId,
       isDeleted: false,
     },
+    include: {
+      patientHealthRecord: true,
+      medicalReports: true,
+    },
   });
 
   return patientInfo;
@@ -85,23 +100,79 @@ const getPatientByIdFromDB = async (
 
 const updatePatientByIdInToDB = async (
   patientId: string,
-  payload: Partial<Patient>
-): Promise<Patient> => {
-  await prisma.patient.findFirstOrThrow({
+  payload: Partial<
+    Patient & {
+      patientHealthRecord?: PatientHealthRecord;
+      medicalReports?: Partial<MedicalReport>[];
+    }
+  >
+) => {
+  const { patientHealthRecord, medicalReports, ...patientData } = payload;
+
+  const patientInfo = await prisma.patient.findFirstOrThrow({
     where: {
       id: patientId,
       isDeleted: false,
     },
   });
 
-  const patientInfo = await prisma.patient.update({
-    where: {
-      id: patientId,
-    },
-    data: payload,
+  const result = await prisma.$transaction(async (tx) => {
+    // Update the basic info of the patient
+    await tx.patient.update({
+      where: {
+        id: patientInfo.id,
+      },
+      data: patientData,
+      include: {
+        patientHealthRecord: true,
+        medicalReports: true,
+      },
+    });
+
+    // Create or update patient health record if provided
+    if (patientHealthRecord) {
+      await tx.patientHealthRecord.upsert({
+        where: {
+          patientId: patientInfo.id,
+        },
+        update: patientHealthRecord,
+        create: {
+          ...patientHealthRecord,
+          patientId: patientInfo.id,
+        },
+      });
+    }
+
+    // Create new medical reports if provided
+    if (medicalReports) {
+      // Filter out reports that don't have required fields
+      const validReports = medicalReports.filter(
+        (report) => report.reportName && report.reportLink
+      );
+
+      if (validReports.length > 0) {
+        await tx.medicalReport.createMany({
+          data: validReports.map((report) => ({
+            reportName: report.reportName!,
+            reportLink: report.reportLink!,
+            patientId: patientInfo.id,
+          })),
+          skipDuplicates: true,
+        });
+      }
+    }
+
+    // Return the updated patient with relations
+    return await tx.patient.findUnique({
+      where: { id: patientInfo.id },
+      include: {
+        patientHealthRecord: true,
+        medicalReports: true,
+      },
+    });
   });
 
-  return patientInfo;
+  return result;
 };
 
 const deletePatientByIdFromDB = async (

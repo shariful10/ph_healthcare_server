@@ -1,7 +1,7 @@
 import prisma from "../../utils/prisma";
 import { IOptions } from "../../interface/pagination";
 import { doctorSearchableFields } from "./doctor.constant";
-import { Doctor, Prisma, UserStatus } from "@prisma/client";
+import { Doctor, DoctorSpecialties, Prisma, UserStatus } from "@prisma/client";
 import { paginationHelper } from "../../helpers/paginationHelper";
 
 const getAllDoctorsFromDB = async (
@@ -112,7 +112,10 @@ const getDoctorByIdFromDB = async (
   return doctorInfo;
 };
 
-const updateDoctorByIdInToDB = async (doctorId: string, payload: any) => {
+const updateDoctorByIdInToDB = async (
+  doctorId: string,
+  payload: Partial<Doctor & { specialties?: Partial<DoctorSpecialties>[] }>
+) => {
   const { specialties, ...doctorData } = payload;
 
   // First, get the current doctor with existing specialties
@@ -146,27 +149,33 @@ const updateDoctorByIdInToDB = async (doctorId: string, payload: any) => {
 
       const specialtiesToAdd = specialties.filter(
         (sp: any) =>
-          !sp.isDeleted && !existingSpecialtyIds.includes(sp.specialtiesId)
+          !sp.isDeleted &&
+          sp.specialtiesId &&
+          !existingSpecialtyIds.includes(sp.specialtiesId)
       );
 
       // Delete specialties that are marked as deleted
       for (const specialty of specialtiesToDelete) {
-        await tx.doctorSpecialties.deleteMany({
-          where: {
-            doctorId: existingDoctor.id,
-            specialtiesId: specialty.specialtiesId,
-          },
-        });
+        if (specialty.specialtiesId) {
+          await tx.doctorSpecialties.deleteMany({
+            where: {
+              doctorId: existingDoctor.id,
+              specialtiesId: specialty.specialtiesId,
+            },
+          });
+        }
       }
 
       // Create only NEW specialties that don't already exist
       for (const specialty of specialtiesToAdd) {
-        await tx.doctorSpecialties.create({
-          data: {
-            doctorId: existingDoctor.id,
-            specialtiesId: specialty.specialtiesId,
-          },
-        });
+        if (specialty.specialtiesId) {
+          await tx.doctorSpecialties.create({
+            data: {
+              doctorId: existingDoctor.id,
+              specialtiesId: specialty.specialtiesId,
+            },
+          });
+        }
       }
     }
 
