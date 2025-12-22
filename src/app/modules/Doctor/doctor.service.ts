@@ -1,7 +1,8 @@
 import prisma from "../../utils/prisma";
+import { IDoctor } from "./doctor.interface";
 import { IOptions } from "../../interface/pagination";
 import { doctorSearchableFields } from "./doctor.constant";
-import { Doctor, DoctorSpecialties, Prisma, UserStatus } from "@prisma/client";
+import { Doctor, Prisma, UserStatus } from "@prisma/client";
 import { paginationHelper } from "../../helpers/paginationHelper";
 
 const getAllDoctorsFromDB = async (
@@ -114,8 +115,8 @@ const getDoctorByIdFromDB = async (
 
 const updateDoctorByIdInToDB = async (
   doctorId: string,
-  payload: Partial<Doctor & { specialties?: Partial<DoctorSpecialties>[] }>
-) => {
+  payload: Partial<IDoctor>
+): Promise<Doctor | null> => {
   const { specialties, ...doctorData } = payload;
 
   // First, get the current doctor with existing specialties

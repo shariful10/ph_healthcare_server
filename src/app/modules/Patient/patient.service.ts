@@ -9,6 +9,7 @@ import prisma from "../../utils/prisma";
 import { IOptions } from "../../interface/pagination";
 import { patientSearchableFields } from "./patient.constant";
 import { paginationHelper } from "../../helpers/paginationHelper";
+import { IPatient } from "./patient.interface";
 
 // Get All Patients
 const getAllPatientsFromDB = async (
@@ -100,13 +101,8 @@ const getPatientByIdFromDB = async (
 
 const updatePatientByIdInToDB = async (
   patientId: string,
-  payload: Partial<
-    Patient & {
-      patientHealthRecord?: PatientHealthRecord;
-      medicalReports?: Partial<MedicalReport>[];
-    }
-  >
-) => {
+  payload: Partial<IPatient>
+): Promise<Patient | null> => {
   const { patientHealthRecord, medicalReports, ...patientData } = payload;
 
   const patientInfo = await prisma.patient.findFirstOrThrow({
@@ -117,7 +113,7 @@ const updatePatientByIdInToDB = async (
   });
 
   const result = await prisma.$transaction(async (tx) => {
-    // Update the basic info of the patient
+    // Update the basic info of the patient if provided
     await tx.patient.update({
       where: {
         id: patientInfo.id,
