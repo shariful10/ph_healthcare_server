@@ -1,15 +1,9 @@
-import {
-  Prisma,
-  Patient,
-  UserStatus,
-  MedicalReport,
-  PatientHealthRecord,
-} from "@prisma/client";
 import prisma from "../../utils/prisma";
+import { IPatient } from "./patient.interface";
 import { IOptions } from "../../interface/pagination";
 import { patientSearchableFields } from "./patient.constant";
+import { Prisma, Patient, UserStatus } from "@prisma/client";
 import { paginationHelper } from "../../helpers/paginationHelper";
-import { IPatient } from "./patient.interface";
 
 // Get All Patients
 const getAllPatientsFromDB = async (
