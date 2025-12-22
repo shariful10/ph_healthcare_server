@@ -95,9 +95,54 @@ model Patient {
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
 
-  user User @relation(references: [email], fields: [email])
+  user                User                 @relation(references: [email], fields: [email])
+  patientHealthRecord PatientHealthRecord?
+  medicalReports      MedicalReport[]
 
   @@map("patients")
+}
+
+model PatientHealthRecord {
+  id                  String         @id @default(cuid())
+  patientId           String         @unique
+  gender              Gender
+  dateOfBirth         String
+  bloodGroup          BloodGroup
+  hasAllergies        Boolean
+  hasDiabetes         Boolean
+  height              String
+  weight              String
+  smokingStatus       Boolean
+  dietaryPreferences  String
+  pregnancyStatus     Boolean
+  mentalHealthHistory String
+  immunizationStatus  String
+  hasPastSurgeries    Boolean
+  recentAnxiety       Boolean
+  recentDepression    Boolean
+  maritalStatus       MaritalStatus?
+
+  // Relations
+  patient Patient @relation(fields: [patientId], references: [id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("patient_health_records")
+}
+
+model MedicalReport {
+  id         String   @id @default(cuid())
+  patientId  String
+  reportName String
+  reportLink String
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  // Relations
+  patient Patient @relation(fields: [patientId], references: [id])
+
+  @@map("medical_reports")
 }
 
 enum UserRole {
@@ -117,4 +162,20 @@ enum Gender {
   MALE
   FEMALE
   OTHER
+}
+
+enum BloodGroup {
+  A_POSITIVE
+  A_NEGATIVE
+  B_POSITIVE
+  B_NEGATIVE
+  O_POSITIVE
+  O_NEGATIVE
+  AB_POSITIVE
+  AB_NEGATIVE
+}
+
+enum MaritalStatus {
+  MARRIED
+  UNMARRIED
 }
