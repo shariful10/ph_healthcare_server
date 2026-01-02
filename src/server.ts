@@ -7,7 +7,7 @@ let server: Server;
 
 const main = async () => {
   try {
-    await seedSuperAdmin(); // Seed Super Admin
+    await seedSuperAdmin();
 
     server = app.listen(config.port, () => {
       console.log(
@@ -21,7 +21,7 @@ const main = async () => {
 
 main();
 
-// Graceful shutdown handling
+// Graceful shutdown handling for unhandled rejections and uncaught exceptions
 const shutdown = () => {
   console.log("🛑 Shutting down servers...");
 

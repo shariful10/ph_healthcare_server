@@ -34,8 +34,6 @@ export default {
     password: process.env.SUPER_ADMIN_PASSWORD,
   },
   url: {
-    file: process.env.FILE_URL,
-    image: process.env.IMAGE_URL,
     backend: process.env.BACKEND_URL,
     frontend: process.env.FRONTEND_URL,
   },
