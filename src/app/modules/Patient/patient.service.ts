@@ -171,31 +171,42 @@ const updatePatientByIdInToDB = async (
 const deletePatientByIdFromDB = async (
   patientId: string
 ): Promise<Patient | null> => {
-  await prisma.patient.findUniqueOrThrow({
+  const patientInfo = await prisma.patient.findUniqueOrThrow({
     where: {
       id: patientId,
       isDeleted: false,
     },
   });
 
-  const patientInfo = await prisma.$transaction(async (tx) => {
-    const deletedData = await tx.patient.delete({
+  const result = await prisma.$transaction(async (tx) => {
+    await tx.medicalReport.deleteMany({
+      where: {
+        patientId: patientId,
+      },
+    });
+
+    await tx.patientHealthRecord.delete({
+      where: {
+        patientId: patientId,
+      },
+    });
+
+    const deletedPatient = await tx.patient.delete({
       where: {
         id: patientId,
-        isDeleted: false,
       },
     });
 
     await tx.user.delete({
       where: {
-        email: deletedData.email,
+        email: patientInfo.email,
       },
     });
 
-    return deletedData;
+    return deletedPatient;
   });
 
-  return patientInfo;
+  return result;
 };
 
 // Soft Delete Patient by ID

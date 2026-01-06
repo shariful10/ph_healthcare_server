@@ -2,20 +2,21 @@
 
 # PH Healthcare Server
 
-A robust backend API starter pack built with Node.js, Express.js, TypeScript, Zod, Prisma, and PostgreSQL. This API provides comprehensive user management, subscription handling, payment processing capabilities with Stripe integration, and file upload functionality.
+A comprehensive healthcare management backend API built with Node.js, Express.js, TypeScript, Zod, Prisma, and PostgreSQL. This API provides complete functionality for managing doctors, patients, appointments, specialties, and admin operations.
 
 ## 🚀 Features
 
-- **Authentication & Authorization**: JWT-based authentication with role-based access control (USER, ADMIN, SUPER_ADMIN).
-- **User Management**: Complete user registration, email verification, profile management with image upload.
-- **Subscription System**: Flexible subscription plans with Stripe payment integration.
-- **Payment Processing**: Secure payment handling with Stripe webhooks and checkout sessions.
-- **File Upload**: Image upload functionality with Cloudinary integration.
-- **Email Services**: Automated email notifications using Brevo SMTP for verification and password reset.
+- **Multi-Role Access Control**: Three-tier role system (USER, ADMIN, SUPER_ADMIN) with permission-based access.
+- **User Management**: User registration, authentication, profile management, and status tracking.
+- **Doctor Management**: Complete doctor profiles with specialties, experience, and appointment fees.
+- **Patient Management**: Patient registration with medical history and medical records tracking.
+- **Appointment System**: Appointment scheduling, status management, and tracking.
+- **Specialty Management**: Medical specialty categories and management.
+- **File Upload**: Secure file upload functionality with Cloudinary integration.
+- **Email Services**: Automated email notifications using Nodemailer for verification and notifications.
 - **Database Management**: PostgreSQL with Prisma ORM for type-safe database operations.
 - **Error Handling**: Comprehensive error handling with custom error classes and validation.
 - **Security**: Password hashing with bcrypt, JWT tokens, request validation, and CORS configuration.
-- **Super Admin Seeding**: Automatic super admin creation on application startup.
 
 ## 🛠 Tech Stack
 
@@ -24,28 +25,27 @@ A robust backend API starter pack built with Node.js, Express.js, TypeScript, Zo
 - **Database**: PostgreSQL
 - **ORM**: Prisma
 - **Authentication**: JWT (JSON Web Tokens)
-- **Payment**: Stripe
 - **File Storage**: Cloudinary
-- **Email Service**: Brevo (formerly Sendinblue) SMTP
+- **Email Service**: Nodemailer SMTP
 - **Validation**: Zod for request validation
 - **Development**: ts-node-dev, ESLint
+- **Password Hashing**: Bcrypt
 
 ## 📋 Prerequisites
 
 - Node.js (v16 or higher)
 - PostgreSQL database
-- Yarn package manager
-- Stripe account for payment processing
+- Yarn or npm package manager
 - Cloudinary account for file uploads
-- Brevo (formerly Sendinblue) account for email services
+- Nodemailer SMTP credentials for email services
 
 ## ⚙️ Installation
 
 1. **Clone the repository**
 
    ```bash
-   git clone https://github.com/shariful10/backend_starter_pack_with_postgres.git
-   cd backend_starter_pack_with_postgres
+   git clone https://github.com/shariful10/ph_healthcare_server.git
+   cd ph_healthcare_server
    ```
 
 2. **Install dependencies**
@@ -68,45 +68,29 @@ A robust backend API starter pack built with Node.js, Express.js, TypeScript, Zo
    # Application Configuration
    NODE_ENV=development
    PORT=5000
-   HOST=localhost
 
    # Database Configuration
-   DATABASE_URL=postgresql://postgres:postgres@localhost:5432/your_database_name
+   DATABASE_URL=postgresql://postgres:password@localhost:5432/ph_healthcare
 
    # JWT Configuration
    JWT_ACCESS_SECRET=your_jwt_access_secret_here
-   JWT_ACCESS_EXPIRES_IN=1h
+   JWT_ACCESS_EXPIRES_IN=7d
    JWT_REFRESH_SECRET=your_jwt_refresh_secret_here
-   JWT_REFRESH_EXPIRES_IN=7d
-   JWT_RESET_PASS_ACCESS_EXPIRES_IN=10m
-
-   # Super Admin Configuration
-   SUPER_ADMIN_EMAIL=admin@example.com
-   SUPER_ADMIN_PASSWORD=your_super_admin_password
-
-   # Email Configuration (Brevo/Sendinblue)
-   EMAIL_FROM=noreply@example.com
-   BREVO_EMAIL=your_brevo_email@example.com
-   BREVO_PASS=your_brevo_password
+   JWT_REFRESH_EXPIRES_IN=30d
 
    # URL Configuration
-   FILE_URL=http://localhost:5000/files
-   IMAGE_URL=http://localhost:5000/images
    BACKEND_URL=http://localhost:5000
    FRONTEND_URL=http://localhost:3000
 
-   # Verification Links
-   VERIFY_EMAIL_LINK=http://localhost:5000/api/auth/verify-email
-   RESET_PASS_UI_LINK=http://localhost:3000/reset-password
-   VERIFY_RESET_PASS_LINK=http://localhost:5000/api/auth/verify-reset-password
+   # Cloudinary Configuration
+   CLOUD_NAME=your_cloudinary_name
+   CLOUDINARY_API_KEY=your_cloudinary_api_key
+   CLOUDINARY_API_SECRET=your_cloudinary_api_secret
 
-   # Stripe Configuration
-   STRIPE_SECRET_KEY=sk_test_your_stripe_secret_key_here
-   STRIPE_SUCCESS_URL=http://localhost:3000/payment/success
-   STRIPE_CANCEL_URL=http://localhost:3000/payment/cancel
-
-   # Legacy JWT Secret (for docker-compose compatibility)
-   JWT_SECRET=your_legacy_jwt_secret_here
+   # Email Configuration (Nodemailer)
+   EMAIL_USER=your_email@gmail.com
+   EMAIL_PASS=your_app_password
+   EMAIL_FROM=noreply@example.com
    ```
 
 4. **Set up the database**
@@ -157,22 +141,28 @@ The server will start on `http://localhost:5000`
 ```
 src/
 ├── app/
-│   ├── builder/          # Query builder utilities
-│   ├── config/           # Configuration files
-│   ├── errors/           # Error handling utilities
-│   ├── helpers/          # Helper functions (password, JWT, OTP)
-│   ├── interface/        # TypeScript interfaces
-│   ├── middlewares/      # Express middlewares
-│   ├── modules/          # Feature modules
-│   │   ├── Auth/         # Authentication module
-│   │   ├── FileUpload/   # File upload module
-│   │   ├── Plan/         # Subscription plans module
-│   │   ├── Subscription/ # Subscription management
-│   │   └── User/         # User management
-│   ├── routes/           # Route definitions
-│   └── utils/            # Utility functions
-├── prisma/               # Database schema and migrations
-└── views/                # View templates
+│   ├── builder/           # Query builder utilities
+│   ├── config/            # Configuration files
+│   ├── errors/            # Error handling utilities
+│   ├── helpers/           # Helper functions (password, JWT, OTP)
+│   ├── interface/         # TypeScript interfaces
+│   ├── middlewares/       # Express middlewares (auth, error handling, validation)
+│   ├── modules/           # Feature modules
+│   │   ├── Admin/         # Admin management
+│   │   ├── Auth/          # Authentication (login, registration)
+│   │   ├── Doctor/        # Doctor management
+│   │   ├── FileUpload/    # File upload module
+│   │   ├── Patient/       # Patient management
+│   │   ├── Specialty/     # Medical specialty management
+│   │   └── User/          # User management
+│   ├── routes/            # Route definitions
+│   ├── shared/            # Shared utilities
+│   └── utils/             # Utility functions
+├── prisma/                # Database schema and migrations
+├── views/                 # View templates (EJS)
+├── app.ts                 # Express app configuration
+├── server.ts              # Server entry point
+└── seedSuperAdmin.ts      # Super admin seeding script
 ```
 
 ## 🔗 API Endpoints
@@ -180,77 +170,97 @@ src/
 ### Authentication
 
 - `POST /api/v1/auth/login` - User login
-- `GET /api/v1/auth/verify-email` - Email verification via link
-- `PUT /api/v1/auth/change-password` - Change password (authenticated users)
-- `POST /api/v1/auth/forgot-password` - Request password reset
-- `POST /api/v1/auth/reset-password` - Reset password via token
-- `GET /api/v1/auth/verify-reset-password` - Verify password reset link
-- `POST /api/v1/auth/resend-verification-link` - Resend email verification
-- `POST /api/v1/auth/resend-reset-pass-link` - Resend password reset link
-- `GET /api/v1/auth/me` - Get current user info
 - `POST /api/v1/auth/refresh-token` - Refresh JWT token
+- `POST /api/v1/auth/logout` - User logout
 
 ### Users
 
 - `POST /api/v1/users/register` - User registration
 - `GET /api/v1/users` - Get all users (Admin/Super Admin only)
-- `GET /api/v1/users/:userId` - Get user by ID (Admin/Super Admin only)
-- `PATCH /api/v1/users/update` - Update user profile with file upload
-- `DELETE /api/v1/users/:userId` - Delete user (Admin/Super Admin only)
+- `GET /api/v1/users/:userId` - Get user by ID
+- `PATCH /api/v1/users/:userId` - Update user information
 
-### Plans
+### Doctors
 
-- `GET /api/v1/plans` - Get all subscription plans
-- `POST /api/v1/plans` - Create new plan (Admin)
-- `PATCH /api/v1/plans/:id` - Update plan (Admin)
-- `DELETE /api/v1/plans/:id` - Delete plan (Admin)
+- `GET /api/v1/doctors` - Get all doctors with pagination
+- `GET /api/v1/doctors/:doctorId` - Get doctor by ID
+- `POST /api/v1/doctors` - Create doctor (Admin/Super Admin)
+- `PATCH /api/v1/doctors/:doctorId` - Update doctor (Admin/Super Admin)
+- `DELETE /api/v1/doctors/:doctorId` - Delete doctor (Admin/Super Admin)
 
-### Subscriptions
+### Patients
 
-- `POST /api/v1/subscriptions/create-subscription` - Create new subscription
-- `GET /api/v1/subscriptions/my-subscription` - Get current user's subscription
-- `GET /api/v1/subscriptions` - Get all subscriptions (authenticated users)
-- `GET /api/v1/subscriptions/:subscriptionId` - Get subscription by ID
-- `PUT /api/v1/subscriptions/:subscriptionId` - Update subscription (Admin/Super Admin only)
-- `DELETE /api/v1/subscriptions/:subscriptionId` - Delete subscription (Admin/Super Admin only)
-- `POST /api/v1/subscriptions/stripe/webhook` - Stripe webhook handler
+- `GET /api/v1/patients` - Get all patients with pagination
+- `GET /api/v1/patients/:patientId` - Get patient by ID
+- `POST /api/v1/patients` - Create patient (Admin/Super Admin)
+- `PATCH /api/v1/patients/:patientId` - Update patient (Admin/Super Admin)
+- `DELETE /api/v1/patients/:patientId` - Delete patient (Admin/Super Admin)
+
+### Admins
+
+- `GET /api/v1/admins` - Get all admins (Super Admin only)
+- `GET /api/v1/admins/:adminId` - Get admin by ID
+- `POST /api/v1/admins` - Create admin (Super Admin)
+- `PATCH /api/v1/admins/:adminId` - Update admin (Super Admin)
+- `DELETE /api/v1/admins/:adminId` - Delete admin (Super Admin)
+
+### Specialties
+
+- `GET /api/v1/specialties` - Get all specialties
+- `POST /api/v1/specialties` - Create specialty (Admin/Super Admin)
+- `PATCH /api/v1/specialties/:specialtyId` - Update specialty (Admin/Super Admin)
+- `DELETE /api/v1/specialties/:specialtyId` - Delete specialty (Admin/Super Admin)
+
+### File Upload
+
+- `POST /api/v1/files/upload` - Upload file/image to Cloudinary
 
 ## 🗃️ Database Schema
 
 ### User Model
 
-- User authentication and profile information with UUID primary key
+- Unique email-based authentication with password hashing
 - Role-based access control (USER, ADMIN, SUPER_ADMIN)
-- Email verification and password reset functionality
-- Subscription status tracking with expiration dates
-- Profile picture support with Cloudinary integration
+- Account status tracking (ACTIVE, INACTIVE, DELETED)
+- Password change requirement flag
+- Relations to Admin, Doctor, and Patient profiles
 
-### Plan Model
+### Admin Model
 
-- Subscription plan details with flexible pricing
-- Stripe integration with product and price IDs
-- Support for different billing intervals (week, month, year)
-- Feature lists stored as JSON
-- Free trial support with configurable trial days
+- Admin profile with contact information
+- Profile photo support
+- Linked to User model via email
+- Soft delete support
 
-### Subscription Model
+### Doctor Model
 
-- User subscription tracking with payment history
-- Integration with Stripe payment processing
-- Payment status tracking (PENDING, COMPLETED, CANCELED, REFUNDED)
-- Start and end date management for subscription periods
+- Complete doctor profile with specialization
+- Appointment fee configuration
+- Experience tracking in years
+- Gender and identification information
+- Profile photo support
+- Linked to User and Specialty models
+- Relations to Appointment and Schedule models
 
-### Upload Model
+### Patient Model
 
-- File upload management with image processing
-- Embedding storage for image analysis
-- Match result tracking for image comparison
+- Patient profile with medical history
+- Contact and address information
+- Gender tracking
+- Soft delete support
+- Relations to Appointment and PatientHealthData models
 
-### MatchResult Model
+### Specialty Model
 
-- Image matching results with similarity scores
-- Matched image and name tracking
-- Performance metrics for image recognition
+- Medical specialty categories
+- Description and metadata
+- Relations to Doctor model
+
+### PatientHealthData Model
+
+- Medical records and health history
+- Patient health information tracking
+- Relations to Patient model
 
 ## 🔒 Authentication & Authorization
 
@@ -284,36 +294,28 @@ Token refresh is handled automatically through the `/api/v1/auth/refresh-token` 
 
 ## 💳 Payment Integration
 
-The application integrates with Stripe for payment processing:
-
-- Subscription plan creation and management
-- Secure payment processing
-- Webhook handling for payment events
-- Automatic subscription status updates
+Currently, this project does not include Stripe integration. Payment processing can be added in future versions.
 
 ## 📧 Email Services
 
-- **Email Provider**: Brevo (formerly Sendinblue) SMTP service
-- **Email Verification**: Automated email verification for new user registration
-- **Password Reset**: Secure password reset functionality with time-limited tokens
-- **Template System**: HTML email templates with branded design
-- **Time Limits**: Email verification and password reset links expire in 10 minutes for security
+- **Email Provider**: Nodemailer SMTP service
+- **Email Notifications**: Automated email notifications for user activities
+- **Template Support**: HTML email templates for formatted messages
 
 ## 🛡️ Security Features
 
 - **Password Security**: Bcrypt hashing with salt rounds for secure password storage
 - **JWT Token Security**:
-  - Separate access and refresh tokens with different secret keys
-  - Configurable token expiration (Access: 1 hour, Refresh: 7 days, Reset: 10 minutes)
+  - Access and refresh token-based authentication
+  - Configurable token expiration
   - Secure token generation and validation
   - Token-based authentication for all protected routes
-  - Password change invalidates existing tokens
 - **Request Validation**: Zod schema validation for all incoming requests
 - **CORS Configuration**: Configured for specific frontend origins with credentials support
-- **Role-Based Access**: Three-tier role system (USER, ADMIN, SUPER_ADMIN)
+- **Role-Based Access**: Three-tier role system (USER, ADMIN, SUPER_ADMIN) with route protection
 - **File Upload Security**: Secure file handling with Cloudinary integration
-- **Email Security**: Time-limited verification and reset links (10-minute expiration)
 - **Error Handling**: Comprehensive error handling without exposing sensitive information
+- **Soft Deletes**: Logical deletion support for data preservation
 
 ## 🧪 Development
 
