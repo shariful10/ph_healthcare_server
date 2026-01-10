@@ -1,10 +1,13 @@
-import { addHours, format } from "date-fns";
+import { addHours, addMinutes, format } from "date-fns";
 import prisma from "../../utils/prisma";
 import { Schedule } from "@prisma/client";
 import { ISchedule } from "./schedule.interface";
 
 const createScheduleInToDB = async (payload: ISchedule): Promise<any> => {
   const { startDate, endDate, startTime, endTime } = payload;
+
+  const intervalTime = 30;
+  const schedules = [];
 
   const currentDate = new Date(startDate);
   const lastDate = new Date(endDate);
@@ -19,21 +22,34 @@ const createScheduleInToDB = async (payload: ISchedule): Promise<any> => {
 
     const endDateTime = new Date(
       addHours(
-        `${format(endDate, "yyyy-MM-dd")}`,
+        `${format(currentDate, "yyyy-MM-dd")}`,
         Number(endTime.split(":")[0])
       )
     );
 
-    while (startDateTime <= endDateTime) {}
-
     console.log("Start DateTime:", startDateTime);
     console.log("End DateTime:", endDateTime);
+
+    while (startDateTime < endDateTime) {
+      const scheduleData = {
+        startDateTime: startDateTime,
+        endDateTime: addMinutes(startDateTime, intervalTime),
+      };
+
+      const result = await prisma.schedule.create({
+        data: scheduleData,
+      });
+      schedules.push(result);
+
+      startDateTime.setMinutes(startDateTime.getMinutes() + intervalTime);
+    }
+
+    currentDate.setDate(currentDate.getDate() + 1);
   }
-  // TODO: Implement database creation logic
-  // const result = await prisma.schedule.create({
-  //   data: null,
-  // });
-  // return result;
+
+  return schedules;
+
+  // TODO: Implement creation logic
 };
 
 export const ScheduleService = {
