@@ -31,33 +31,31 @@ model Admin {
   isDeleted     Boolean  @default(false)
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
-
-  user User @relation(fields: [email], references: [email])
+  user          User     @relation(fields: [email], references: [email])
 
   @@map("admins")
 }
 
 model Doctor {
-  id                  String   @id @default(cuid())
+  id                  String              @id @default(cuid())
   name                String
-  email               String   @unique
-  profilePhoto        String?  @default("")
+  email               String              @unique
+  profilePhoto        String?             @default("")
   contactNumber       String
   address             String?
   registrationNumber  String
-  experience          Int?     @default(0)
+  experience          Int?                @default(0)
   gender              Gender
   appointmentFee      Int
   qualifications      String
   currentWorkingPlace String
   designation         String
-  isDeleted           Boolean  @default(false)
-  createdAt           DateTime @default(now())
-  updatedAt           DateTime @updatedAt
-
-  user              User                @relation(fields: [email], references: [email])
-  doctorSpecialties DoctorSpecialties[]
-  doctorSchedules   DoctorSchedule[]
+  isDeleted           Boolean             @default(false)
+  createdAt           DateTime            @default(now())
+  updatedAt           DateTime            @updatedAt
+  user                User                @relation(fields: [email], references: [email])
+  doctorSpecialties   DoctorSpecialties[]
+  doctorSchedules     DoctorSchedule[]
 
   @@map("doctors")
 }
@@ -147,10 +145,9 @@ model MedicalReport {
 }
 
 model Schedule {
-  id        String   @id @default(cuid())
-  startDate DateTime
-  endDate   DateTime
-
+  id              String           @id @default(cuid())
+  startDateTime   DateTime
+  endDateTime     DateTime
   createdAt       DateTime         @default(now())
   updatedAt       DateTime         @updatedAt
   doctorSchedules DoctorSchedule[]
@@ -163,13 +160,10 @@ model DoctorSchedule {
   scheduleId    String
   isBooked      Boolean
   appointmentId String
-
-  // Relations
-  doctor   Doctor   @relation(fields: [doctorId], references: [id])
-  schedule Schedule @relation(fields: [scheduleId], references: [id])
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  doctor        Doctor   @relation(fields: [doctorId], references: [id])
+  schedule      Schedule @relation(fields: [scheduleId], references: [id])
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
 
   @@id([doctorId, scheduleId])
   @@map("doctor_schedules")
