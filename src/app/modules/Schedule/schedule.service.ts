@@ -1,10 +1,9 @@
-import { addHours, addMinutes, format } from "date-fns";
 import prisma from "../../utils/prisma";
 import { Schedule } from "@prisma/client";
-import { ISchedule } from "./schedule.interface";
-import e from "cors";
 import AppError from "../../errors/AppError";
+import { ISchedule } from "./schedule.interface";
 import { httpStatus } from "../../utils/httpStatus";
+import { addHours, addMinutes, format } from "date-fns";
 
 const createScheduleInToDB = async (
   payload: ISchedule
@@ -59,7 +58,7 @@ const createScheduleInToDB = async (
       } else {
         throw new AppError(
           httpStatus.BAD_REQUEST,
-          "Schedule already exists for the given time slot"
+          "Schedule already exists for the given time slot."
         );
       }
 
