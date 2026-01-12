@@ -1,8 +1,14 @@
 import { Router } from "express";
+import auth from "../../middlewares/auth";
+import { UserRole } from "@prisma/client";
 import { ScheduleController } from "./schedule.controller";
 
 const router = Router();
 
-router.post("/create-schedule", ScheduleController.createSchedule);
+router.post(
+  "/create-schedule",
+  auth(UserRole.SUPER_ADMIN, UserRole.ADMIN),
+  ScheduleController.createSchedule
+);
 
 export const ScheduleRoutes = router;
