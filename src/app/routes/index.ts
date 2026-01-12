@@ -4,9 +4,10 @@ import { UserRoutes } from "../modules/User/user.routes";
 import { AdminRoutes } from "../modules/Admin/admin.route";
 import { DoctorRoutes } from "../modules/Doctor/doctor.route";
 import { PatientRoutes } from "../modules/Patient/patient.route";
+import { ScheduleRoutes } from "../modules/Schedule/schedule.route";
 import { SpecialtyRoutes } from "../modules/Specialty/specialty.route";
 import { FileUploadRoutes } from "../modules/FileUpload/fileUpload.route";
-import { ScheduleRoutes } from "../modules/Schedule/schedule.route";
+import { DoctorScheduleRoutes } from "../modules/DoctorSchedule/doctorSchedule.route";
 
 const router = Router();
 
@@ -42,6 +43,10 @@ const moduleRoutes = [
   {
     path: "/schedules",
     route: ScheduleRoutes,
+  },
+  {
+    path: "doctor-schedules",
+    route: DoctorScheduleRoutes,
   },
 ];
 

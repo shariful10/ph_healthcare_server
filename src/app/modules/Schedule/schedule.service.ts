@@ -1,8 +1,6 @@
 import prisma from "../../utils/prisma";
 import { Schedule } from "@prisma/client";
-import AppError from "../../errors/AppError";
 import { ISchedule } from "./schedule.interface";
-import { httpStatus } from "../../utils/httpStatus";
 import { addHours, addMinutes, format } from "date-fns";
 
 const createScheduleInToDB = async (
@@ -55,11 +53,6 @@ const createScheduleInToDB = async (
           data: scheduleData,
         });
         schedules.push(result);
-      } else {
-        throw new AppError(
-          httpStatus.BAD_REQUEST,
-          "Schedule already exists for the given time slot."
-        );
       }
 
       startDateTime.setMinutes(startDateTime.getMinutes() + intervalTime);
