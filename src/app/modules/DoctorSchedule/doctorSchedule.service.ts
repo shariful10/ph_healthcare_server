@@ -33,6 +33,8 @@ const getMySchedulesFromDB = async (
 
   const andConditions: Prisma.DoctorScheduleWhereInput[] = [];
 
+  andConditions.push({ doctor: { email } });
+
   if (startDate && endDate) {
     andConditions.push({
       AND: [
@@ -109,7 +111,30 @@ const getMySchedulesFromDB = async (
   };
 };
 
+const deleteDoctorScheduleFromDB = async (
+  scheduleId: string,
+  email: string,
+) => {
+  const doctorInfo = await prisma.doctor.findUniqueOrThrow({
+    where: {
+      email,
+    },
+  });
+
+  await prisma.doctorSchedule.delete({
+    where: {
+      doctorId_scheduleId: {
+        doctorId: doctorInfo.id,
+        scheduleId,
+      },
+    },
+  });
+
+  return;
+};
+
 export const DoctorScheduleService = {
   getMySchedulesFromDB,
   createDoctorScheduleInToDB,
+  deleteDoctorScheduleFromDB,
 };
