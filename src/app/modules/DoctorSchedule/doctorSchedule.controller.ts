@@ -4,8 +4,11 @@ import sendResponse from "../../utils/sendResponse";
 import { DoctorScheduleService } from "./doctorSchedule.service";
 
 const createDoctorSchedule = catchAsync(async (req, res) => {
+  const email = req.user.email;
+
   const result = await DoctorScheduleService.createDoctorScheduleInToDB(
-    req.body
+    email,
+    req.body.scheduleIds
   );
 
   sendResponse(res, {
