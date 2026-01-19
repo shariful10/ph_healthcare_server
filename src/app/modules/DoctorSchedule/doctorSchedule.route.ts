@@ -13,4 +13,10 @@ router.post(
 
 router.get("/", auth(UserRole.DOCTOR), DoctorScheduleController.getMySchedules);
 
+router.delete(
+  "/:scheduleId",
+  auth(UserRole.DOCTOR),
+  DoctorScheduleController.deleteDoctorSchedule,
+);
+
 export const DoctorScheduleRoutes = router;
