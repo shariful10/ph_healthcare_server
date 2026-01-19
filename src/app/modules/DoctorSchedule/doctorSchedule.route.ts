@@ -8,13 +8,9 @@ const router = Router();
 router.post(
   "/",
   auth(UserRole.DOCTOR),
-  DoctorScheduleController.createDoctorSchedule
+  DoctorScheduleController.createDoctorSchedule,
 );
 
-router.get(
-  "/",
-  // auth(UserRole.SUPER_ADMIN, UserRole.ADMIN, UserRole.DOCTOR),
-  DoctorScheduleController.getAllDoctorSchedules
-);
+router.get("/", auth(UserRole.DOCTOR), DoctorScheduleController.getMySchedules);
 
 export const DoctorScheduleRoutes = router;
