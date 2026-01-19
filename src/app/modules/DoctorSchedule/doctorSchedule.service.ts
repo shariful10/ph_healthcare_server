@@ -123,12 +123,10 @@ const deleteDoctorScheduleFromDB = async (
     },
   });
 
-  const isBookedSchedule = await prisma.doctorSchedule.findUnique({
+  const isBookedSchedule = await prisma.doctorSchedule.findFirst({
     where: {
-      doctorId_scheduleId: {
-        doctorId: doctorInfo.id,
-        scheduleId,
-      },
+      doctorId: doctorInfo.id,
+      scheduleId,
       isBooked: true,
     },
   });
@@ -136,7 +134,7 @@ const deleteDoctorScheduleFromDB = async (
   if (isBookedSchedule) {
     throw new AppError(
       httpStatus.BAD_REQUEST,
-      "Cannot delete a booked schedule",
+      "You cannot delete a booked schedule.",
     );
   }
 
