@@ -10,7 +10,7 @@ const createDoctorSchedule = catchAsync(async (req, res) => {
 
   const result = await DoctorScheduleService.createDoctorScheduleInToDB(
     email,
-    req.body.scheduleIds
+    req.body.scheduleIds,
   );
 
   sendResponse(res, {
@@ -20,13 +20,26 @@ const createDoctorSchedule = catchAsync(async (req, res) => {
   });
 });
 
-const getAllDoctorSchedules = catchAsync(async (req, res) => {
-  // TODO: Implement filtering if needed
-  // TODO: Implement pagination if needed
-  // TODO: Implement sorting if needed
+const getMySchedules = catchAsync(async (req, res) => {
+  const email = req.user.email;
+  const options = pick(req.query, metaFields);
+  const query = pick(req.query, ["startDate", "endDate", "isBooked"]);
+
+  const result = await DoctorScheduleService.getMySchedulesFromDB(
+    query,
+    options,
+    email,
+  );
+
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    message: "My Schedules are retrieved successfully",
+    meta: result.meta,
+    data: result.data,
+  });
 });
 
 export const DoctorScheduleController = {
   createDoctorSchedule,
-  getAllDoctorSchedules,
+  getMySchedules,
 };
