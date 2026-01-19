@@ -16,10 +16,15 @@ const createSchedule = catchAsync(async (req, res) => {
 });
 
 const getAllSchedules = catchAsync(async (req, res) => {
-  const query = pick(req.query, ["startDateTime", "endDateTime"]);
+  const email = req.user.email;
   const options = pick(req.query, metaFields);
+  const query = pick(req.query, ["startDate", "endDate"]);
 
-  const result = await ScheduleService.getAllSchedulesFromDB(query, options);
+  const result = await ScheduleService.getAllSchedulesFromDB(
+    query,
+    options,
+    email,
+  );
 
   sendResponse(res, {
     statusCode: httpStatus.OK,
