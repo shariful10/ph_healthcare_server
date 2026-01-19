@@ -8,13 +8,9 @@ const router = Router();
 router.post(
   "/create-schedule",
   auth(UserRole.SUPER_ADMIN, UserRole.ADMIN),
-  ScheduleController.createSchedule
+  ScheduleController.createSchedule,
 );
 
-router.get(
-  "/",
-  // auth(UserRole.SUPER_ADMIN, UserRole.ADMIN),
-  ScheduleController.getAllSchedules
-);
+router.get("/", auth(UserRole.DOCTOR), ScheduleController.getAllSchedules);
 
 export const ScheduleRoutes = router;
