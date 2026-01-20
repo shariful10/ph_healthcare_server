@@ -1,3 +1,7 @@
+import {
+  scheduleFilterableFields,
+  myScheduleFilterableFields,
+} from "./doctorSchedule.constant";
 import pick from "../../shared/pick";
 import catchAsync from "../../utils/catchAsync";
 import { httpStatus } from "../../utils/httpStatus";
@@ -23,7 +27,7 @@ const createDoctorSchedule = catchAsync(async (req, res) => {
 const getMySchedules = catchAsync(async (req, res) => {
   const email = req.user.email;
   const options = pick(req.query, metaFields);
-  const query = pick(req.query, ["startDate", "endDate", "isBooked"]);
+  const query = pick(req.query, myScheduleFilterableFields);
 
   const result = await DoctorScheduleService.getMySchedulesFromDB(
     query,
@@ -51,8 +55,26 @@ const deleteDoctorSchedule = catchAsync(async (req, res) => {
   });
 });
 
+const getAllDoctorSchedules = catchAsync(async (req, res) => {
+  const query = pick(req.query, scheduleFilterableFields);
+  const options = pick(req.query, ["limit", "page", "sortBy", "sortOrder"]);
+
+  const result = await DoctorScheduleService.getAllDoctorSchedulesFromDB(
+    query,
+    options,
+  );
+
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    message: "Doctor Schedule retrieval successfully",
+    meta: result.meta,
+    data: result.data,
+  });
+});
+
 export const DoctorScheduleController = {
   getMySchedules,
   createDoctorSchedule,
   deleteDoctorSchedule,
+  getAllDoctorSchedules,
 };

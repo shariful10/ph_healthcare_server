@@ -11,7 +11,13 @@ router.post(
   DoctorScheduleController.createDoctorSchedule,
 );
 
-router.get("/", auth(UserRole.DOCTOR), DoctorScheduleController.getMySchedules);
+router.get("/", auth(), DoctorScheduleController.getMySchedules);
+
+router.get(
+  "/my-schedule",
+  auth(UserRole.DOCTOR),
+  DoctorScheduleController.getMySchedules,
+);
 
 router.delete(
   "/:scheduleId",
