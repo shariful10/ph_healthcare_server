@@ -4,6 +4,7 @@ import { Prisma, Schedule } from "@prisma/client";
 import { IOptions } from "../../interface/pagination";
 import { addHours, addMinutes, format } from "date-fns";
 import { paginationHelper } from "../../helpers/paginationHelper";
+import { httpStatus } from "../../utils/httpStatus";
 
 const createScheduleInToDB = async (
   payload: ISchedule,
@@ -155,7 +156,38 @@ const getAllSchedulesFromDB = async (
   };
 };
 
+const getScheduleByIdFromDB = async (scheduleId: string) => {
+  const result = await prisma.schedule.findUniqueOrThrow({
+    where: {
+      id: scheduleId,
+    },
+    include: {
+      doctorSchedules: true,
+    },
+  });
+
+  return result;
+};
+
+const deleteScheduleByIdFromDB = async (scheduleId: string) => {
+  await prisma.schedule.findFirstOrThrow({
+    where: {
+      id: scheduleId,
+    },
+  });
+
+  await prisma.schedule.delete({
+    where: {
+      id: scheduleId,
+    },
+  });
+
+  return;
+};
+
 export const ScheduleService = {
   createScheduleInToDB,
   getAllSchedulesFromDB,
+  getScheduleByIdFromDB,
+  deleteScheduleByIdFromDB,
 };
