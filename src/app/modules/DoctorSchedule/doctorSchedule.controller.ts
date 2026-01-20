@@ -66,7 +66,7 @@ const getAllDoctorSchedules = catchAsync(async (req, res) => {
 
   sendResponse(res, {
     statusCode: httpStatus.OK,
-    message: "Doctor Schedule retrieval successfully",
+    message: "Doctor Schedules retrieved successfully.",
     meta: result.meta,
     data: result.data,
   });
