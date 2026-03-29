@@ -226,7 +226,7 @@ enum MaritalStatus {
 
 enum AppointmentStatus {
   SCHEDULED
-  ONPROGRESS
+  INPROGRESS
   COMPLETED
   CANCELED
 }

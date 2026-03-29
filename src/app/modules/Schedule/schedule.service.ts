@@ -4,7 +4,6 @@ import { Prisma, Schedule } from "@prisma/client";
 import { IOptions } from "../../interface/pagination";
 import { addHours, addMinutes, format } from "date-fns";
 import { paginationHelper } from "../../helpers/paginationHelper";
-import { httpStatus } from "../../utils/httpStatus";
 
 const createScheduleInToDB = async (
   payload: ISchedule,
