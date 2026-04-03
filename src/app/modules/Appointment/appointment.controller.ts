@@ -4,10 +4,10 @@ import { httpStatus } from "../../utils/httpStatus";
 import { AppointmentService } from "./appointment.service";
 
 const createAppointment = catchAsync(async (req, res) => {
-  const patientId = req.user.id;
+  const email = req.user.email;
   const result = await AppointmentService.createAppointmentInToDB(
     req.body,
-    patientId,
+    email,
   );
 
   sendResponse(res, {

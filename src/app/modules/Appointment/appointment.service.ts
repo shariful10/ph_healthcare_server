@@ -1,11 +1,16 @@
+import prisma from "../../utils/prisma";
 import { Appointment } from "@prisma/client";
 
-const createAppointmentInToDB = async (
-  payload: Appointment,
-  patientId: string,
-) => {
-  console.log("Appointment payload:", payload);
-  console.log("Patient ID:", patientId);
+const createAppointmentInToDB = async (payload: Appointment, email: string) => {
+  const patientData = await prisma.patient.findFirstOrThrow({
+    where: {
+      user: {
+        email,
+      },
+    },
+  });
+
+  console.log("PatientData: =>", patientData);
 };
 
 export const AppointmentService = {
