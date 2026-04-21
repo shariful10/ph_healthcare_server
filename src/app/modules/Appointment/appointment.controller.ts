@@ -4,11 +4,8 @@ import { httpStatus } from "../../utils/httpStatus";
 import { AppointmentService } from "./appointment.service";
 
 const createAppointment = catchAsync(async (req, res) => {
-  const email = req.user.email;
-  const result = await AppointmentService.createAppointmentInToDB(
-    req.body,
-    email,
-  );
+  const id = req.user.id;
+  const result = await AppointmentService.createAppointmentInToDB(req.body, id);
 
   sendResponse(res, {
     statusCode: httpStatus.OK,
