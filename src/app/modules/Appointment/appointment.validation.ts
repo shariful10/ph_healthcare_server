@@ -10,10 +10,10 @@ const createAppointmentSchema = z.object({
       required_error: "Schedule ID is required.",
       invalid_type_error: "Schedule ID must be a string.",
     }),
-    videoCallingId: z.string({
-      required_error: "Video Calling ID is required.",
-      invalid_type_error: "Video Calling ID must be a string.",
-    }),
+    // videoCallingId: z.string({
+    //   required_error: "Video Calling ID is required.",
+    //   invalid_type_error: "Video Calling ID must be a string.",
+    // }),
     status: z
       .enum(["SCHEDULED", "INPROGRESS", "COMPLETED", "CANCELED"], {
         required_error: "Status is required.",

@@ -17,7 +17,7 @@ const createAppointmentInToDB = async (payload: Appointment, id: string) => {
     },
   });
 
-  const doctorScheduleData = await prisma.doctorSchedule.findFirstOrThrow({
+  await prisma.doctorSchedule.findFirstOrThrow({
     where: {
       doctorId: payload.doctorId,
       scheduleId: payload.scheduleId,
@@ -25,13 +25,23 @@ const createAppointmentInToDB = async (payload: Appointment, id: string) => {
     },
   });
 
-  const videoCallingId = await uuidv4();
+  const videoCallingId = uuidv4();
 
-  console.log("PatientData: =>", patientData);
-  console.log("DoctorData: =>", doctorData);
-  console.log("DoctorScheduleData: =>", doctorScheduleData);
-  console.log("payload: =>", payload);
-  console.log("videoCallingId: =>", videoCallingId);
+  const result = await prisma.appointment.create({
+    data: {
+      videoCallingId,
+      doctorId: doctorData.id,
+      patientId: patientData.id,
+      scheduleId: payload.scheduleId,
+    },
+    include: {
+      patient: true,
+      doctor: true,
+      schedule: true,
+    },
+  });
+
+  return result;
 };
 
 export const AppointmentService = {
