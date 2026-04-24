@@ -54,6 +54,8 @@ const createAppointmentInToDB = async (payload: Appointment, id: string) => {
         appointmentId: appointmentData.id,
       },
     });
+
+    return appointmentData;
   });
 
   return result;
