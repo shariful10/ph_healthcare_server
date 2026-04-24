@@ -25,7 +25,7 @@ const createAppointmentInToDB = async (payload: Appointment, id: string) => {
     },
   });
 
-  const videoCallingId = uuidv4();
+  const videoCallingId: string = uuidv4();
 
   const result = await prisma.$transaction(async (tx) => {
     const appointmentData = await tx.appointment.create({
