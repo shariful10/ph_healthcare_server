@@ -1,6 +1,6 @@
+import { v4 as uuidv4 } from "uuid";
 import prisma from "../../utils/prisma";
 import { Appointment } from "@prisma/client";
-import { v4 as uuidv4 } from "uuid";
 
 const createAppointmentInToDB = async (payload: Appointment, id: string) => {
   const patientData = await prisma.patient.findFirstOrThrow({
@@ -25,7 +25,7 @@ const createAppointmentInToDB = async (payload: Appointment, id: string) => {
     },
   });
 
-  const videoCallingId = uuidv4();
+  const videoCallingId: string = uuidv4();
 
   const result = await prisma.$transaction(async (tx) => {
     const appointmentData = await tx.appointment.create({
