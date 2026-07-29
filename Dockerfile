@@ -1,25 +1,32 @@
-FROM node:18-alpine
-
+FROM node:20.19-alpine AS builder
 WORKDIR /app
 
-# Install yarn
-RUN npm install -g yarn
+# Install build deps for native modules and Prisma
+RUN apk add --no-cache python3 make g++
 
 COPY package.json yarn.lock ./
+RUN yarn --frozen-lockfile
 
-RUN yarn install --frozen-lockfile
-
+# Copy source and build
 COPY . .
 
-# Generate Prisma client
-RUN yarn prisma generate
+# Generate Prisma client and compile TypeScript
+RUN yarn prisma generate && yarn build
 
-# Check the actual path of your entry file and build accordingly
-RUN yarn build
-
-# Set environment variables
+FROM node:20.19-alpine AS runner
+WORKDIR /app
 ENV NODE_ENV=production
 
-# Check the actual path to your entry point file
-# Update the CMD to point to your actual entry file
+COPY package.json yarn.lock ./
+RUN yarn install --production --frozen-lockfile --ignore-scripts
+
+# Copy compiled app, prisma client and production node_modules
+COPY --from=builder /app/dist ./dist
+COPY --from=builder /app/prisma ./prisma
+COPY --from=builder /app/views ./views
+COPY --from=builder /app/node_modules ./node_modules
+
+EXPOSE 5000
+
+# Default command — server is started from src/server.ts -> dist/server.js
 CMD ["node", "dist/server.js"]

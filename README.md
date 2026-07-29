@@ -134,6 +134,12 @@ yarn start
 docker-compose up -d
 ```
 
+The app container is configured to listen on `0.0.0.0:5000` and uses the in-network Postgres service at `postgresql://postgres:postgres@db:5432/philip_db?schema=public`.
+
+If Docker Desktop is not running, `docker compose up` will fail before the app starts with a Linux engine pipe error on Windows.
+
+Required runtime env variables for the app container are the same names used by the codebase, including `JWT_ACCESS_SECRET`, `JWT_REFRESH_SECRET`, `SUPER_ADMIN_EMAIL`, `SUPER_ADMIN_PASSWORD`, `APP_USER`, `APP_PASS`, `BREVO_USER`, `BREVO_PASS`, `BREVO_EMAIL`, `CLOUDINARY_CLOUD_NAME`, `CLOUDINARY_API_KEY`, and `CLOUDINARY_API_SECRET`.
+
 The server will start on `http://localhost:5000`
 
 ## 📁 Project Structure
